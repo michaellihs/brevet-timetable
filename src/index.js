@@ -252,23 +252,23 @@ class Timetable extends React.Component {
             <div>
                 <Form>
                     <h1>{"Timetable"}</h1>
-                    <h2>{"Input values"}</h2>
+                    <Row className={"mx-0"}>
+                        <Form.Group className={"mb-3"}>
+                            <Form.Label>Select event</Form.Label>
+                            <Form.Select onChange={(e) => this.selectEvent(e)}>
+                                {Array.from(events).map(([eventName, event]) => {
+                                    return (<option key={eventName} value={eventName}>{eventName}</option>);
+                                })}
+                            </Form.Select>
+                        </Form.Group>
+                    </Row>
+                    <h2>{"Departure and time limit"}</h2>
                     <DepartureForm
                         initialDeparture={"2022-08-07 12:45"}
                         updateDepartureHandler={(departure) => this.handleDepartureChange(departure)}
                         initialTimelimit={'125:00'}
                         updateTimeLimitHandler={(timeLimit) => this.handleTimeLimitChange(timeLimit)}
                     />
-                    <Row className={"mx-0"}>
-                        <Form.Group className={"mb-3"}>
-                            <Form.Label>Select event</Form.Label>
-                            <Form.Select onChange={(e) => this.selectEvent(e)}>
-                                {Array.from(events).map(([eventName, event]) => {
-                                  return (<option key={eventName} value={eventName}>{eventName}</option>);
-                                })}
-                            </Form.Select>
-                        </Form.Group>
-                    </Row>
                     <Row className={"mx-0"}>
                         <table className="table timetable">
                             <thead>
