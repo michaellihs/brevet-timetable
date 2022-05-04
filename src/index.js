@@ -19,13 +19,11 @@ function Stage(props) {
 
 class Timetable extends React.Component {
     render() {
-        const stages = this.state.stages;
         return (
             <Form>
                 <Form.Group className={"mb-3"} controlId={"formDeparture"}>
                     <Form.Label>Departure</Form.Label>
                     <Form.Control placeholder={"2022-08-05 12:45"} className={"w-25"}/>
-                    {/*<Form.Control placeholder={"2022-08-05 12:45"} id={"input_departure"} />*/}
                     <Form.Text className={"text-muted"}>
                         Please provide the start date and start time in 'jjjj-mm-dd hh:mm'
                     </Form.Text>
@@ -33,7 +31,6 @@ class Timetable extends React.Component {
                 <Form.Group className={"mb-3"} controlId={"formLimit"}>
                     <Form.Label>Time Limit</Form.Label>
                     <Form.Control placeholder={"125:00"}  className={"w-25"}/>
-                    {/*<Form.Control placeholder={"125:00"} id={"input_limit"} />*/}
                     <Form.Text className={"text-muted"}>
                         Please provide the max time limit for the event
                     </Form.Text>
@@ -57,7 +54,7 @@ class Timetable extends React.Component {
                     </table>
                 </Row>
             </Form>
-    );
+        );
     }
 
     constructor(props) {
