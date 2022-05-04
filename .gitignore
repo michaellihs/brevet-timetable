@@ -25,3 +25,6 @@ yarn-error.log*
 .idea/
 
 src/tictactoe.js
+
+.github/gh-pages
+.github/gh-pages.pub
