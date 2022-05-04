@@ -21,6 +21,7 @@ class Timetable extends React.Component {
     render() {
         return (
             <Form>
+                <h1>{"Timetable"}</h1>
                 <Form.Group className={"mb-3"} controlId={"formDeparture"}>
                     <Form.Label>Departure</Form.Label>
                     <Form.Control placeholder={"2022-08-05 12:45"} className={"w-25"}/>
