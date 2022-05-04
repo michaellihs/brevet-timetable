@@ -49,13 +49,13 @@ class Stage extends React.Component {
                     <TtField field={"distance"} stage={this.props.stage} inputValue={this.props.value.distance} updateInputHandler={this.props.updateInputHandler}/>
                 </td>
                 <td>
-                    <TtField field={"climb"} stage={this.props.stage} inputValue={this.props.value.distance} updateInputHandler={this.props.updateInputHandler}/>
+                    <TtField field={"climb"} stage={this.props.stage} inputValue={this.props.value.climb} updateInputHandler={this.props.updateInputHandler}/>
                 </td>
                 <td>
-                    <TtField field={"pause"} stage={this.props.stage} inputValue={this.props.value.distance} updateInputHandler={this.props.updateInputHandler}/>
+                    <TtField field={"pause"} stage={this.props.stage} inputValue={this.props.value.pause} updateInputHandler={this.props.updateInputHandler}/>
                 </td>
                 <td>
-                    <Button variant={"danger"}>{"Remove Stage"}</Button>
+                    <Button onClick={() => this.props.clickRemoveStageHandler(this.props.stage)} variant={"danger"}>{"Remove Stage"}</Button>
                 </td>
             </tr>
         );
@@ -109,7 +109,7 @@ class Timetable extends React.Component {
             stages: [
                 {"from": "CP 1", "to": "CP 2", "departure": "12:45", "distance": "120 km", "climb": "700m", "pause": "30 min"},
                 {"from": "CP 2", "to": "CP 3", "departure": "14:45", "distance": "60 km", "climb": "1200m", "pause": "30 min"},
-                {"from": "CP 3", "to": "CP 3", "departure": "16:45", "distance": "100 km", "climb": "1000m", "pause": "30 min"},
+                {"from": "CP 3", "to": "CP 4", "departure": "16:45", "distance": "100 km", "climb": "1000m", "pause": "30 min"},
             ],
         }
     }
@@ -128,7 +128,8 @@ class Timetable extends React.Component {
             })
         });
 
-        document.getElementById("input_from").value = "";
+        // Make "to" value the default "from" value for the next input
+        document.getElementById("input_from").value = document.getElementById("input_to").value;
         document.getElementById("input_to").value = "";
         document.getElementById("input_distance").value = "";
         document.getElementById("input_climb").value = "";
@@ -138,7 +139,13 @@ class Timetable extends React.Component {
     renderStages() {
         return this.state.stages.map((stage, index) => {
             return (
-                <Stage key={index} stage={index} updateInputHandler={(stage, field, value) => this.updateInput(stage, field, value)} value={stage} />
+                <Stage
+                    key={index}
+                    stage={index}
+                    updateInputHandler={(stage, field, value) => this.updateInput(stage, field, value)}
+                    clickRemoveStageHandler={(stage) => this.removeStage(stage)}
+                    value={stage}
+                />
             );
         });
     }
@@ -164,6 +171,15 @@ class Timetable extends React.Component {
             stages: stages
         });
      }
+
+    removeStage(stage) {
+        console.log("remove stage was clicked for stage: " + stage);
+        const stages = this.state.stages.slice();
+        stages.splice(stage, 1);
+        this.setState({
+            stages: stages
+        });
+    }
 }
 
 // ========================================
