@@ -3,18 +3,63 @@ import ReactDOM from 'react-dom';
 import { Row, Button, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Stage(props) {
-    return (
-        // for updating, see https://stackoverflow.com/a/36683831/1549950
-        <tr key={props.stage}>
-            <td><Form.Control onChange={props.updateInputHandler(props.stage, "from")} defaultValue={props.value.from} /></td>
-            <td><Form.Control onChange={props.updateInputHandler(props.stage, "to")} defaultValue={props.value.to}/></td>
-            <td><Form.Control onChange={props.updateInputHandler(props.stage, "distance")} defaultValue={props.value.distance}/></td>
-            <td><Form.Control onChange={props.updateInputHandler(props.stage, "climb")} defaultValue={props.value.climb}/></td>
-            <td><Form.Control onChange={props.updateInputHandler(props.stage, "pause")} defaultValue={props.value.pause}/></td>
-            <td><Button variant={"danger"}>{"Remove Stage"}</Button></td>
-        </tr>
-    )
+class TtField extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            inputValue: ""
+        }
+    }
+
+    componentDidMount() {
+        this.setState({inputValue: this.props.inputValue});
+    }
+
+    handleChange = (e) => {
+        this.setState({inputValue: e.target.value});
+    }
+
+    render() {
+        return (
+            <Form.Control
+                onBlur={() => this.props.updateInputHandler(this.props.stage, this.props.field, this.state.inputValue)}
+                onChange={this.handleChange}
+                defaultValue={this.props.inputValue}
+            />
+        );
+    }
+
+}
+
+class Stage extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <tr key={this.props.stage}>
+                <td>
+                    <TtField field={"from"} stage={this.props.stage} inputValue={this.props.value.from} updateInputHandler={this.props.updateInputHandler}/>
+                </td>
+                <td>
+                    <TtField field={"to"} stage={this.props.stage} inputValue={this.props.value.to} updateInputHandler={this.props.updateInputHandler}/>
+                </td>
+                <td>
+                    <TtField field={"distance"} stage={this.props.stage} inputValue={this.props.value.distance} updateInputHandler={this.props.updateInputHandler}/>
+                </td>
+                <td>
+                    <TtField field={"climb"} stage={this.props.stage} inputValue={this.props.value.distance} updateInputHandler={this.props.updateInputHandler}/>
+                </td>
+                <td>
+                    <TtField field={"pause"} stage={this.props.stage} inputValue={this.props.value.distance} updateInputHandler={this.props.updateInputHandler}/>
+                </td>
+                <td>
+                    <Button variant={"danger"}>{"Remove Stage"}</Button>
+                </td>
+            </tr>
+        );
+    }
 }
 
 class Timetable extends React.Component {
@@ -93,7 +138,7 @@ class Timetable extends React.Component {
     renderStages() {
         return this.state.stages.map((stage, index) => {
             return (
-                <Stage key={index} stage={index} updateInputHandler={(stage, value) => this.updateInput(stage, value)} value={stage} />
+                <Stage key={index} stage={index} updateInputHandler={(stage, field, value) => this.updateInput(stage, field, value)} value={stage} />
             );
         });
     }
@@ -111,8 +156,13 @@ class Timetable extends React.Component {
         );
     }
 
-    updateInput(stage, value) {
-        console.log("Want to update stage: " + stage + " with value: " + value);
+    updateInput(stage, field, value) {
+        console.log("updating stage: " + stage + " and field: " + field + " with value: " + value);
+        const stages = this.state.stages.slice();
+        stages[stage][field] = value;
+        this.setState({
+            stages: stages
+        });
      }
 }
 
