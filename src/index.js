@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Duration, DateTime } from 'luxon';
 import { Row, Button, Form } from "react-bootstrap";
+import {utils, writeFileXLSX} from 'xlsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function DistanceField(props) {
@@ -26,6 +27,62 @@ function DurationField(props) {
 
 function TimeField(props) {
     return props.value.toFormat("dd.LL. HH:mm");
+}
+
+class DepartureForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            departure: "",
+            timeLimit: 0
+        }
+    }
+
+    componentDidMount() {
+        this.setState({
+            departure: this.props.initialDeparture,
+            timeLimit: this.props.initialTimeLimit,
+        });
+    }
+
+    handleDepartureChange = (e) => {
+        this.setState({departure: e.target.value});
+    }
+
+    handleTimeLimitChange = (e) => {
+        this.setState({timeLimit: e.target.value});
+    }
+
+    render() {
+        return (
+            <>
+                <Form.Group className={"mb-3"} controlId={"formDeparture"}>
+                    <Form.Label>Departure</Form.Label>
+                    <Form.Control
+                        onChange={this.handleDepartureChange}
+                        onBlur={() => this.props.updateDepartureHandler(this.state.departure)}
+                        placeholder={"2022-08-05 12:45"}
+                        className={"w-25"}
+                    />
+                    <Form.Text className={"text-muted"}>
+                        Please provide the start date and start time in 'jjjj-mm-dd hh:mm'
+                    </Form.Text>
+                </Form.Group>
+                <Form.Group className={"mb-3"} controlId={"formLimit"}>
+                    <Form.Label>Time Limit</Form.Label>
+                    <Form.Control
+                        onChange={this.handleTimeLimitChange}
+                        onBlur={() => this.props.updateTimeLimitHandler(this.state.timeLimit)}
+                        placeholder={"125:00"}
+                        className={"w-25"}
+                    />
+                    <Form.Text className={"text-muted"}>
+                        Please provide the max time limit for the event
+                    </Form.Text>
+                </Form.Group>
+            </>
+        );
+    }
 }
 
 class TtField extends React.Component {
@@ -147,12 +204,24 @@ class Timetable extends React.Component {
                 {"from": "St Ives", "to": "Great Easton", "distance": 69.00, "climb": 350, "pause": 30},
                 {"from": "Great Easton", "to": "Loughton", "distance": 48.60, "climb": 365, "pause": 30},
             ],
+            departure: "2022-08-07 12:45",
+            timeLimit: "125:00",
             // stages: [
             //     {"from": "CP 1", "to": "CP 2", "departure": "12:45", "distance": "120", "climb": "700", "pause": "30"},
             //     {"from": "CP 2", "to": "CP 3", "departure": "14:45", "distance": "60", "climb": "1200", "pause": "30"},
             //     {"from": "CP 3", "to": "CP 4", "departure": "16:45", "distance": "100", "climb": "1000", "pause": "30"},
             // ],
         }
+    }
+
+    handleDepartureChange(departure) {
+        console.log('change departure: ' + departure);
+        this.setState({departure: departure});
+    }
+
+    handleTimeLimitChange(timeLimit) {
+        console.log('change time limit: ' + timeLimit);
+        this.setState({timeLimit: timeLimit});
     }
 
     render() {
@@ -164,20 +233,12 @@ class Timetable extends React.Component {
                 <Form>
                     <h1>{"Timetable"}</h1>
                     <h2>{"Input values"}</h2>
-                    <Form.Group className={"mb-3"} controlId={"formDeparture"}>
-                        <Form.Label>Departure</Form.Label>
-                        <Form.Control placeholder={"2022-08-05 12:45"} className={"w-25"} />
-                        <Form.Text className={"text-muted"}>
-                            Please provide the start date and start time in 'jjjj-mm-dd hh:mm'
-                        </Form.Text>
-                    </Form.Group>
-                    <Form.Group className={"mb-3"} controlId={"formLimit"}>
-                        <Form.Label>Time Limit</Form.Label>
-                        <Form.Control placeholder={"125:00"}  className={"w-25"}/>
-                        <Form.Text className={"text-muted"}>
-                            Please provide the max time limit for the event
-                        </Form.Text>
-                    </Form.Group>
+                    <DepartureForm
+                        initialDeparture={"2022-08-07 12:45"}
+                        updateDepartureHandler={(departure) => this.handleDepartureChange(departure)}
+                        initialTimelimit={'125:00'}
+                        updateTimeLimitHandler={(timeLimit) => this.handleTimeLimitChange(timeLimit)}
+                    />
                     <Row className={"mx-0"}>
                         <table className="table timetable">
                             <thead>
@@ -199,7 +260,7 @@ class Timetable extends React.Component {
                 </Form>
                 <Row className={"mx-0"}>
                     <h2>{"Calculated timetable"}</h2>
-                    <table className="table timetable">
+                    <table className="table timetable" id={"calcTable"}>
                         <thead>
                         <tr className={"d-flex"}>
                             <th className={"col-2"}>stage</th>
@@ -220,6 +281,11 @@ class Timetable extends React.Component {
                         </tbody>
                     </table>
                 </Row>
+                <Row className={"mx-0"}>
+                    <Form.Group className={"mb-3"}>
+                        <Button variant={"success"} onClick={() => this.exportToExcel()}>{"Excel export"}</Button>
+                    </Form.Group>
+                </Row>
             </div>
         );
     }
@@ -232,7 +298,7 @@ class Timetable extends React.Component {
         let totalClimb = 0;
         let totalTime = 0;
         // TODO read from form field
-        let departure = DateTime.fromISO("2022-08-07T12:45:00.000")
+        let departure = DateTime.fromFormat(this.state.departure, "yyyy-MM-dd HH:mm")
         let arrival = departure
 
         return this.state.stages.map((stage, index) => {
@@ -358,6 +424,14 @@ class Timetable extends React.Component {
         this.setState({
             stages: stages
         });
+    }
+
+    exportToExcel() {
+        console.log('export to excel');
+        const table = document.getElementById('calcTable');
+        console.log(table);
+        const workbook = utils.table_to_book(table);
+        writeFileXLSX(workbook, 'timetable.xlsx');
     }
 }
 
