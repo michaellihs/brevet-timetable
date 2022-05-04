@@ -302,11 +302,12 @@ class Timetable extends React.Component {
         let arrival = departure
 
         return this.state.stages.map((stage, index) => {
-            totalDistance += stage.distance;
-            totalClimb += stage.climb;
+            totalDistance += Number(stage.distance);
+            totalClimb += Number(stage.climb);
             const stageDuration = getStageDuration(stage.distance, stage.climb);
-            totalTime += stageDuration + stage.pause;
+            totalTime += stageDuration + Number(stage.pause);
             arrival = departure.plus({minutes: stageDuration});
+
             const result = (
                 <tr key={index} className={"d-flex"}>
                     <td className={"col-2"}><strong>{stage.from} - {stage.to}</strong></td>
