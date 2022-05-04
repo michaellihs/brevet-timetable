@@ -1,7 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Duration, DateTime } from 'luxon';
 import { Row, Button, Form } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+function DistanceField(props) {
+    return (props.value.toLocaleString('en-US', {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+        useGrouping: false
+    }) + " km");
+}
+
+function SpeedField(props) {
+    return (props.value.toLocaleString('en-US', {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+        useGrouping: false
+    }) + " km/h");
+}
+
+function DurationField(props) {
+    return (Duration.fromMillis(props.value * 60 * 1000).toFormat("hh:mm"))
+}
+
+function TimeField(props) {
+    return props.value.toFormat("dd.LL. HH:mm");
+}
 
 class TtField extends React.Component {
     constructor(props) {
@@ -101,14 +126,39 @@ class Timetable extends React.Component {
         super(props);
         this.state = {
             stages: [
-                {"from": "CP 1", "to": "CP 2", "departure": "12:45", "distance": "120", "climb": "700", "pause": "30"},
-                {"from": "CP 2", "to": "CP 3", "departure": "14:45", "distance": "60", "climb": "1200", "pause": "30"},
-                {"from": "CP 3", "to": "CP 4", "departure": "16:45", "distance": "100", "climb": "1000", "pause": "30"},
+                {"from": "Loughton", "to": "St Ives", "distance": 102.20, "climb": 700, "pause": 30},
+                {"from": "St Ives", "to": "Spalding", "distance": 61.10, "climb": 95, "pause": 30},
+                {"from": "Spalding", "to": "Louth", "distance": 82.20, "climb": 465, "pause": 210},
+                {"from": "Louth", "to": "Hessle", "distance": 57.80, "climb": 485, "pause": 30},
+                {"from": "Hessle", "to": "Malton", "distance": 66.90, "climb": 680, "pause": 30},
+                {"from": "Malton", "to": "Barnard Castle", "distance": 114.00, "climb": 1255, "pause": 30},
+                {"from": "Barnard Castle", "to": "Brampton", "distance": 83.70, "climb": 990, "pause": 210},
+                {"from": "Brampton", "to": "Moffat", "distance": 71.50, "climb": 810, "pause": 30},
+                {"from": "Moffat", "to": "Dunfermline", "distance": 111.40, "climb": 1145, "pause": 30},
+                {"from": "Dunfermline", "to": "Innerleithen", "distance": 81.20, "climb": 1135, "pause": 30},
+                {"from": "Innerleithen", "to": "Eskdalemuir", "distance": 49.50, "climb": 660, "pause": 30},
+                {"from": "Eskdalemuir", "to": "Brampton", "distance": 58.10, "climb": 585, "pause": 210},
+                {"from": "Brampton", "to": "Barnard Castle", "distance": 83.60, "climb": 1000, "pause": 30},
+                {"from": "Barnard Castle", "to": "Malton", "distance": 111.70, "climb": 1155, "pause": 30},
+                {"from": "Malton", "to": "Hessle", "distance": 70.00, "climb": 710, "pause": 30},
+                {"from": "Hessle", "to": "Louth", "distance": 58.30, "climb": 545, "pause": 210},
+                {"from": "Louth", "to": "Spalding", "distance": 81.30, "climb": 340, "pause": 30},
+                {"from": "Spalding", "to": "St Ives", "distance": 60.30, "climb": 115, "pause": 30},
+                {"from": "St Ives", "to": "Great Easton", "distance": 69.00, "climb": 350, "pause": 30},
+                {"from": "Great Easton", "to": "Loughton", "distance": 48.60, "climb": 365, "pause": 30},
             ],
+            // stages: [
+            //     {"from": "CP 1", "to": "CP 2", "departure": "12:45", "distance": "120", "climb": "700", "pause": "30"},
+            //     {"from": "CP 2", "to": "CP 3", "departure": "14:45", "distance": "60", "climb": "1200", "pause": "30"},
+            //     {"from": "CP 3", "to": "CP 4", "departure": "16:45", "distance": "100", "climb": "1000", "pause": "30"},
+            // ],
         }
     }
 
     render() {
+        const alignRight = {
+            textAlign: 'right'
+        };
         return (
             <div>
                 <Form>
@@ -116,7 +166,7 @@ class Timetable extends React.Component {
                     <h2>{"Input values"}</h2>
                     <Form.Group className={"mb-3"} controlId={"formDeparture"}>
                         <Form.Label>Departure</Form.Label>
-                        <Form.Control placeholder={"2022-08-05 12:45"} className={"w-25"}/>
+                        <Form.Control placeholder={"2022-08-05 12:45"} className={"w-25"} />
                         <Form.Text className={"text-muted"}>
                             Please provide the start date and start time in 'jjjj-mm-dd hh:mm'
                         </Form.Text>
@@ -151,13 +201,18 @@ class Timetable extends React.Component {
                     <h2>{"Calculated timetable"}</h2>
                     <table className="table timetable">
                         <thead>
-                        <tr>
-                            <th>from</th>
-                            <th>to</th>
-                            <th>distance</th>
-                            <th>climb</th>
-                            <th>pause</th>
-                            <th></th>
+                        <tr className={"d-flex"}>
+                            <th className={"col-2"}>stage</th>
+                            <th style={alignRight} className={"col-1"}>departure</th>
+                            <th style={alignRight} className={"col-1"}>arrival</th>
+                            <th style={alignRight} className={"col-1"}>stage distance</th>
+                            <th style={alignRight} className={"col-1"}>total distance</th>
+                            <th style={alignRight} className={"col-1"}>stage climb</th>
+                            <th style={alignRight} className={"col-1"}>total climb</th>
+                            <th style={alignRight} className={"col-1"}>pause</th>
+                            <th style={alignRight} className={"col-1"}>stage time</th>
+                            <th style={alignRight} className={"col-1"}>total time</th>
+                            <th style={alignRight} className={"col-1"}>average</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -170,16 +225,40 @@ class Timetable extends React.Component {
     }
 
     renderStagesStatic() {
+        const divStyle = {
+            textAlign: 'right'
+        };
+        let totalDistance = 0;
+        let totalClimb = 0;
+        let totalTime = 0;
+        // TODO read from form field
+        let departure = DateTime.fromISO("2022-08-07T12:45:00.000")
+        let arrival = departure
+
         return this.state.stages.map((stage, index) => {
-            return (
-                <tr>
-                    <td>{stage.from}</td>
-                    <td>{stage.to}</td>
-                    <td>{stage.distance}</td>
-                    <td>{stage.climb}</td>
-                    <td>{stage.pause}</td>
+            totalDistance += stage.distance;
+            totalClimb += stage.climb;
+            const stageDuration = getStageDuration(stage.distance, stage.climb);
+            totalTime += stageDuration + stage.pause;
+            arrival = departure.plus({minutes: stageDuration});
+            const result = (
+                <tr key={index} className={"d-flex"}>
+                    <td className={"col-2"}><strong>{stage.from} - {stage.to}</strong></td>
+                    <td className={"col-1"} style={divStyle}><TimeField value={departure} /></td>
+                    <td className={"col-1"} style={divStyle}><TimeField value={arrival} /></td>
+                    <td className={"col-1"} style={divStyle}><DistanceField value={stage.distance}/></td>
+                    <td className={"col-1"} style={divStyle}><DistanceField value={totalDistance}/></td>
+                    <td className={"col-1"} style={divStyle}>{stage.climb} m</td>
+                    <td className={"col-1"} style={divStyle}>{totalClimb} m</td>
+                    <td className={"col-1"} style={divStyle}><DurationField value={stage.pause} /></td>
+                    <td className={"col-1"} style={divStyle}><DurationField value={stageDuration} /></td>
+                    <td className={"col-1"} style={divStyle}><DurationField value={totalTime} /></td>
+                    <td className={"col-1"} style={divStyle}><SpeedField value={stage.distance / stageDuration * 60} /></td>
                 </tr>
             );
+            departure = arrival.plus({minutes: stage.pause});
+            arrival = arrival.plus({minutes: stage.pause});
+            return result;
         });
     }
 
@@ -280,6 +359,11 @@ class Timetable extends React.Component {
             stages: stages
         });
     }
+}
+
+
+function getStageDuration(distance, climb) {
+    return (distance * 2) + (climb / 450 * 60);
 }
 
 // ========================================
