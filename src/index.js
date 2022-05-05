@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {DateTime, Duration} from 'luxon';
-import {Button, Container, Form, Row, Col} from "react-bootstrap";
+import {Button, Container, Form, Row, Col, Alert} from "react-bootstrap";
 import {utils, writeFileXLSX} from 'xlsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {DepartureForm} from "./components/departureForm";
@@ -40,6 +40,8 @@ class Timetable extends React.Component {
             stages: events.get('LEL 2022'),
             departure: "2022-08-07 12:45",
             timeLimit: "125:00",
+            minutesPerKm: 2,
+            climbPerHour: 450,
         }
     }
 
@@ -61,7 +63,7 @@ class Timetable extends React.Component {
             <Container fluid>
                 <Row>
                     <Col>
-                        <h2>Select event</h2>
+                        <h2>{"Select event"}</h2>
                         <Form.Group className={"mb-3"}>
                             <Form.Label>Select event</Form.Label>
                             <Form.Select onChange={(e) => this.selectEvent(e)}>
@@ -80,19 +82,66 @@ class Timetable extends React.Component {
                             updateTimeLimitHandler={(timeLimit) => this.handleTimeLimitChange(timeLimit)}
                         />
                     </Col>
+                    <Col>
+                        <h2>{"Parameters"}</h2>
+                        <Form>
+                            <Row>
+                                <Col>
+                                    <Form.Group className={"mb-3"} controlId={"minutesPerKm"}>
+                                        <Form.Label>Minutes / km</Form.Label>
+                                        <Form.Control
+                                            placeholder={"2"}
+                                            defaultValue={this.state.minutesPerKm}
+                                        />
+                                        <Form.Text className={"text-muted"}>
+                                            How many minutes do you need per kilometer
+                                        </Form.Text>
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group className={"mb-3"} controlId={"climbPerHour"}>
+                                        <Form.Label>m / h</Form.Label>
+                                        <Form.Control
+                                            placeholder={"2"}
+                                            defaultValue={this.state.climbPerHour}
+                                        />
+                                        <Form.Text className={"text-muted"}>
+                                            How many meters do you climb per hour
+                                        </Form.Text>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <Alert variant={"success"}>
+                                        The duration per stage is calculated as:
+                                        <pre>(distance * minutesPerKm) + (climb / climbPerHour * 60)</pre>
+                                    </Alert>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <Form.Group className={"mb-3"}>
+                                        <Button variant={"primary"} onClick={() => this.updateParameters()}>{"Apply"}</Button>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Col>
                 </Row>
                 <Row>
                     <Col>
+                        <h2>{"Stages"}</h2>
                         <Form>
                             <Row className={"mx-0"}>
                                 <table className="table timetable">
                                     <thead>
                                     <tr>
-                                        <th>from</th>
-                                        <th>to</th>
-                                        <th>distance</th>
-                                        <th>climb</th>
-                                        <th>pause</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Distance</th>
+                                        <th>Climb</th>
+                                        <th>Pause</th>
                                         <th></th>
                                     </tr>
                                     </thead>
@@ -148,15 +197,18 @@ class Timetable extends React.Component {
         let departure = DateTime.fromFormat(this.state.departure, "yyyy-MM-dd HH:mm")
         let arrival = departure
 
-        return this.state.stages.map((stage, index) => {
+        const minutesPerKm = Number(this.state.minutesPerKm);
+        const climbPerHour = Number(this.state.climbPerHour);
+
+        return this.state.stages.map((stage) => {
             totalDistance += Number(stage.distance);
             totalClimb += Number(stage.climb);
-            const stageDuration = getStageDuration(stage.distance, stage.climb);
+            const stageDuration = getStageDuration(stage.distance, stage.climb, minutesPerKm, climbPerHour);
             totalTime += stageDuration + Number(stage.pause);
             arrival = departure.plus({minutes: stageDuration});
 
             const result = (
-                <tr key={index} className={"d-flex"}>
+                <tr key={stage.id} className={"d-flex"}>
                     <td className={"col-2"}><strong>{stage.from} - {stage.to}</strong></td>
                     <td className={"col-1"} style={divStyle}><TimeField value={departure} /></td>
                     <td className={"col-1"} style={divStyle}><TimeField value={arrival} /></td>
@@ -289,11 +341,18 @@ class Timetable extends React.Component {
         console.log("select event: " + event.target.value);
         this.setState({stages: events.get(event.target.value)});
     }
+
+    updateParameters() {
+        this.setState({
+            minutesPerKm: Number(document.getElementById("minutesPerKm").value),
+            climbPerHour: Number(document.getElementById("climbPerHour").value),
+        }, function() {console.log(this.state);});
+    }
 }
 
 
-function getStageDuration(distance, climb) {
-    return (distance * 2) + (climb / 450 * 60);
+function getStageDuration(distance, climb, minutesPerKm, climbPerHour) {
+    return (distance * minutesPerKm) + (climb / climbPerHour * 60);
 }
 
 // ========================================

@@ -34,7 +34,7 @@ export class DepartureForm extends React.Component {
                         onChange={this.handleDepartureChange}
                         onBlur={() => this.props.updateDepartureHandler(this.state.departure)}
                         placeholder={"2022-08-05 12:45"}
-                        className={"w-25"}
+                        className={"w-50"}
                         defaultValue={this.props.initialDeparture}
                     />
                     <Form.Text className={"text-muted"}>
@@ -47,7 +47,7 @@ export class DepartureForm extends React.Component {
                         onChange={this.handleTimeLimitChange}
                         onBlur={() => this.props.updateTimeLimitHandler(this.state.timeLimit)}
                         placeholder={"125:00"}
-                        className={"w-25"}
+                        className={"w-50"}
                         defaultValue={this.props.initialTimelimit}
                     />
                     <Form.Text className={"text-muted"}>
