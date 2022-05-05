@@ -33,6 +33,56 @@ function TimeField(props) {
     return props.value.toFormat("dd.LL. HH:mm");
 }
 
+class ArrivalTimes extends React.Component {
+    render() {
+        const stages = this.props.stages;
+        const startTime = this.props.params.startTime;
+        const timeLimit = this.props.params.timeLimit;
+        const minutesPerKm = this.props.params.minutesPerKm;
+        const climbPerHour = this.props.params.climbPerHour;
+        const timetable = getTimetableFromStages(stages, startTime, timeLimit, minutesPerKm, climbPerHour);
+        const days = this.getDaysFromTimetable(timetable);
+
+        return (
+            <table className={"table"}>
+                <thead>
+                    <tr>
+                        <th></th>
+                        {days.map((day, index) => { return <th key={index}>{day}</th> })}
+                    </tr>
+                </thead>
+                <tbody>
+                    {timetable.map((stage, index) => {
+                        return (
+                            <tr key={index}>
+                                <td><strong>{stage.to}</strong></td>
+                                {days.map((day, index) => {
+                                    const sleep = (stage.pause > 60) ? "😴" : "";
+                                    const arrivalOnDay = (day === stage.arrival.weekdayShort) ? stage.arrival.toFormat("HH:mm") + " " + sleep : "";
+                                    return (
+                                        <td key={index}>{arrivalOnDay}</td>
+                                    );
+                                })}
+                            </tr>
+                        )
+                    })}
+                </tbody>
+            </table>
+        );
+    }
+
+    getDaysFromTimetable(stages) {
+        var days = [];
+        stages.forEach((stage) =>{
+            let weekday = stage.arrival.weekdayShort;
+            if (!days.includes(weekday)) {
+                days.push(weekday);
+            }
+        });
+        return days;
+    }
+}
+
 class Timetable extends React.Component {
     constructor(props) {
         super(props);
@@ -156,19 +206,19 @@ class Timetable extends React.Component {
                         <h2>{"Calculated timetable"}</h2>
                         <table className="table timetable" id={"calcTable"}>
                             <thead>
-                            <tr className={"d-flex"}>
-                                <th className={"col-2"}>stage</th>
-                                <th style={alignRight} className={"col-1"}>departure</th>
-                                <th style={alignRight} className={"col-1"}>arrival</th>
-                                <th style={alignRight} className={"col-1"}>stage distance</th>
-                                <th style={alignRight} className={"col-1"}>total distance</th>
-                                <th style={alignRight} className={"col-1"}>stage climb</th>
-                                <th style={alignRight} className={"col-1"}>total climb</th>
-                                <th style={alignRight} className={"col-1"}>pause</th>
-                                <th style={alignRight} className={"col-1"}>stage time</th>
-                                <th style={alignRight} className={"col-1"}>total time</th>
-                                <th style={alignRight} className={"col-1"}>average</th>
-                            </tr>
+                                <tr className={"d-flex"}>
+                                    <th className={"col-2"}>stage</th>
+                                    <th style={alignRight} className={"col-1"}>departure</th>
+                                    <th style={alignRight} className={"col-1"}>arrival</th>
+                                    <th style={alignRight} className={"col-1"}>stage distance</th>
+                                    <th style={alignRight} className={"col-1"}>total distance</th>
+                                    <th style={alignRight} className={"col-1"}>stage climb</th>
+                                    <th style={alignRight} className={"col-1"}>total climb</th>
+                                    <th style={alignRight} className={"col-1"}>pause</th>
+                                    <th style={alignRight} className={"col-1"}>stage time</th>
+                                    <th style={alignRight} className={"col-1"}>total time</th>
+                                    <th style={alignRight} className={"col-1"}>average</th>
+                                </tr>
                             </thead>
                             <tbody>
                             {this.renderStagesStatic()}
@@ -179,6 +229,12 @@ class Timetable extends React.Component {
                         </Form.Group>
                     </Col>
                 </Row>
+                <Row>
+                    <Col>
+                        <h2>{"Arrival times"}</h2>
+                        <ArrivalTimes stages={this.state.stages} params={{startTime: this.state.departure, timeLimit: this.state.timeLimit, minutesPerKm: this.state.minutesPerKm, climbPerHour: this.state.climbPerHour}} />
+                    </Col>
+                </Row>
             </Container>
         );
     }
@@ -187,10 +243,10 @@ class Timetable extends React.Component {
         const divStyle = {
             textAlign: 'right'
         };
+
         let totalDistance = 0;
         let totalClimb = 0;
         let totalTime = 0;
-        // TODO read from form field
         let departure = DateTime.fromFormat(this.state.departure, "yyyy-MM-dd HH:mm")
         let arrival = departure
 
@@ -203,6 +259,7 @@ class Timetable extends React.Component {
             const stageDuration = getStageDuration(stage.distance, stage.climb, minutesPerKm, climbPerHour);
             totalTime += stageDuration + Number(stage.pause);
             arrival = departure.plus({minutes: stageDuration});
+            const average = Number(stage.distance) / stageDuration * 60;
 
             const result = (
                 <tr key={stage.id} className={"d-flex"}>
@@ -216,11 +273,12 @@ class Timetable extends React.Component {
                     <td className={"col-1"} style={divStyle}><DurationField value={stage.pause} /></td>
                     <td className={"col-1"} style={divStyle}><DurationField value={stageDuration} /></td>
                     <td className={"col-1"} style={divStyle}><DurationField value={totalTime} /></td>
-                    <td className={"col-1"} style={divStyle}><SpeedField value={stage.distance / stageDuration * 60} /></td>
+                    <td className={"col-1"} style={divStyle}><SpeedField value={average} /></td>
                 </tr>
             );
             departure = arrival.plus({minutes: stage.pause});
             arrival = arrival.plus({minutes: stage.pause});
+
             return result;
         });
     }
@@ -347,6 +405,43 @@ class Timetable extends React.Component {
     }
 }
 
+// TODO test me & use me for static timetable calculation
+function getTimetableFromStages(stages, startTime, timeLimit, minutesPerKm, climbPerHour) {
+
+    let totalDistance = 0;
+    let totalClimb = 0;
+    let totalTime = 0;
+    let departure = DateTime.fromFormat(startTime, "yyyy-MM-dd HH:mm")
+    let arrival = departure
+
+    return stages.map((stage) => {
+        totalDistance += Number(stage.distance);
+        totalClimb += Number(stage.climb);
+        const stageDuration = getStageDuration(stage.distance, stage.climb, minutesPerKm, climbPerHour);
+        totalTime += stageDuration + Number(stage.pause);
+        arrival = departure.plus({minutes: stageDuration});
+        const average = Number(stage.distance) / stageDuration * 60;
+
+        const entry = {
+            from: stage.from,
+            to: stage.to,
+            departure: departure,
+            arrival: arrival,
+            distance: stage.distance,
+            climb: stage.climb,
+            pause: stage.pause,
+            totalDistance: totalDistance,
+            totalClimb: totalClimb,
+            totalTime: totalTime,
+            average: average,
+        };
+
+        departure = arrival.plus({minutes: stage.pause});
+        arrival = arrival.plus({minutes: stage.pause});
+
+        return entry;
+    });
+}
 
 function getStageDuration(distance, climb, minutesPerKm, climbPerHour) {
     return (distance * minutesPerKm) + (climb / climbPerHour * 60);
