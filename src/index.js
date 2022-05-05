@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {DateTime, Duration} from 'luxon';
-import {Button, Form, Row} from "react-bootstrap";
+import {Button, Container, Form, Row, Col} from "react-bootstrap";
 import {utils, writeFileXLSX} from 'xlsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {DepartureForm} from "./components/departureForm";
@@ -58,10 +58,10 @@ class Timetable extends React.Component {
             textAlign: 'right'
         };
         return (
-            <div>
-                <Form>
-                    <h1>{"Timetable"}</h1>
-                    <Row className={"mx-0"}>
+            <Container fluid>
+                <Row>
+                    <Col>
+                        <h2>Select event</h2>
                         <Form.Group className={"mb-3"}>
                             <Form.Label>Select event</Form.Label>
                             <Form.Select onChange={(e) => this.selectEvent(e)}>
@@ -70,62 +70,70 @@ class Timetable extends React.Component {
                                 })}
                             </Form.Select>
                         </Form.Group>
-                    </Row>
-                    <h2>{"Departure and time limit"}</h2>
-                    <DepartureForm
-                        initialDeparture={"2022-08-07 12:45"}
-                        updateDepartureHandler={(departure) => this.handleDepartureChange(departure)}
-                        initialTimelimit={'125:00'}
-                        updateTimeLimitHandler={(timeLimit) => this.handleTimeLimitChange(timeLimit)}
-                    />
-                    <Row className={"mx-0"}>
-                        <table className="table timetable">
+                    </Col>
+                    <Col>
+                        <h2>{"Departure and time limit"}</h2>
+                        <DepartureForm
+                            initialDeparture={"2022-08-07 12:45"}
+                            updateDepartureHandler={(departure) => this.handleDepartureChange(departure)}
+                            initialTimelimit={'125:00'}
+                            updateTimeLimitHandler={(timeLimit) => this.handleTimeLimitChange(timeLimit)}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <Form>
+                            <Row className={"mx-0"}>
+                                <table className="table timetable">
+                                    <thead>
+                                    <tr>
+                                        <th>from</th>
+                                        <th>to</th>
+                                        <th>distance</th>
+                                        <th>climb</th>
+                                        <th>pause</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {this.renderStages()}
+                                    {this.renderNewStage()}
+                                    </tbody>
+                                </table>
+                            </Row>
+                        </Form>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <h2>{"Calculated timetable"}</h2>
+                        <table className="table timetable" id={"calcTable"}>
                             <thead>
-                            <tr>
-                                <th>from</th>
-                                <th>to</th>
-                                <th>distance</th>
-                                <th>climb</th>
-                                <th>pause</th>
-                                <th></th>
+                            <tr className={"d-flex"}>
+                                <th className={"col-2"}>stage</th>
+                                <th style={alignRight} className={"col-1"}>departure</th>
+                                <th style={alignRight} className={"col-1"}>arrival</th>
+                                <th style={alignRight} className={"col-1"}>stage distance</th>
+                                <th style={alignRight} className={"col-1"}>total distance</th>
+                                <th style={alignRight} className={"col-1"}>stage climb</th>
+                                <th style={alignRight} className={"col-1"}>total climb</th>
+                                <th style={alignRight} className={"col-1"}>pause</th>
+                                <th style={alignRight} className={"col-1"}>stage time</th>
+                                <th style={alignRight} className={"col-1"}>total time</th>
+                                <th style={alignRight} className={"col-1"}>average</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {this.renderStages()}
-                            {this.renderNewStage()}
+                            {this.renderStagesStatic()}
                             </tbody>
                         </table>
-                    </Row>
-                </Form>
-                <Row className={"mx-0"}>
-                    <h2>{"Calculated timetable"}</h2>
-                    <table className="table timetable" id={"calcTable"}>
-                        <thead>
-                        <tr className={"d-flex"}>
-                            <th className={"col-2"}>stage</th>
-                            <th style={alignRight} className={"col-1"}>departure</th>
-                            <th style={alignRight} className={"col-1"}>arrival</th>
-                            <th style={alignRight} className={"col-1"}>stage distance</th>
-                            <th style={alignRight} className={"col-1"}>total distance</th>
-                            <th style={alignRight} className={"col-1"}>stage climb</th>
-                            <th style={alignRight} className={"col-1"}>total climb</th>
-                            <th style={alignRight} className={"col-1"}>pause</th>
-                            <th style={alignRight} className={"col-1"}>stage time</th>
-                            <th style={alignRight} className={"col-1"}>total time</th>
-                            <th style={alignRight} className={"col-1"}>average</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {this.renderStagesStatic()}
-                        </tbody>
-                    </table>
+                        <Form.Group className={"mb-3"}>
+                            <Button variant={"success"} onClick={() => this.exportToExcel()}>{"Excel export"}</Button>
+                        </Form.Group>
+                    </Col>
                 </Row>
-                <Row className={"mx-0"}>
-                    <Form.Group className={"mb-3"}>
-                        <Button variant={"success"} onClick={() => this.exportToExcel()}>{"Excel export"}</Button>
-                    </Form.Group>
-                </Row>
-            </div>
+            </Container>
         );
     }
 
