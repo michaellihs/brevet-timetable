@@ -45,14 +45,12 @@ class Timetable extends React.Component {
         }
     }
 
-    handleDepartureChange(departure) {
-        console.log('change departure: ' + departure);
-        this.setState({departure: departure});
-    }
-
-    handleTimeLimitChange(timeLimit) {
-        console.log('change time limit: ' + timeLimit);
-        this.setState({timeLimit: timeLimit});
+    handleStartTimeAndTimeLimitChange(departure, timeLimit) {
+        console.log('change departure: ' + departure + ' and time limit: ' + timeLimit);
+        this.setState({
+            timeLimit: timeLimit,
+            departure: departure,
+        });
     }
 
     render() {
@@ -77,9 +75,8 @@ class Timetable extends React.Component {
                         <h2>{"Departure and time limit"}</h2>
                         <DepartureForm
                             initialDeparture={"2022-08-07 12:45"}
-                            updateDepartureHandler={(departure) => this.handleDepartureChange(departure)}
+                            updateStartTimeAndTimeLimitHandler={(departure, timeLimit) => this.handleStartTimeAndTimeLimitChange(departure, timeLimit)}
                             initialTimelimit={'125:00'}
-                            updateTimeLimitHandler={(timeLimit) => this.handleTimeLimitChange(timeLimit)}
                         />
                     </Col>
                     <Col>
