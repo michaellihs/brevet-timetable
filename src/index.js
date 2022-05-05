@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Duration, DateTime } from 'luxon';
-import {Row, Button, Form, Dropdown} from "react-bootstrap";
+import {DateTime, Duration} from 'luxon';
+import {Button, Form, Row} from "react-bootstrap";
 import {utils, writeFileXLSX} from 'xlsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {DepartureForm} from "./components/departureForm";
+import {Stage} from "./components/stage";
 
 const events = new Map();
 events.set("LEL 2022", [
@@ -71,157 +73,6 @@ function DurationField(props) {
 
 function TimeField(props) {
     return props.value.toFormat("dd.LL. HH:mm");
-}
-
-class DepartureForm extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            departure: "2022-08-07 12:45",
-            timeLimit: "125:00"
-        }
-    }
-
-    componentDidMount() {
-        this.setState({
-            departure: this.props.initialDeparture,
-            timeLimit: this.props.initialTimelimit,
-        });
-    }
-
-    handleDepartureChange = (e) => {
-        this.setState({departure: e.target.value});
-    }
-
-    handleTimeLimitChange = (e) => {
-        this.setState({timeLimit: e.target.value});
-    }
-
-    render() {
-        return (
-            <>
-                <Form.Group className={"mb-3"} controlId={"formDeparture"}>
-                    <Form.Label>Departure</Form.Label>
-                    <Form.Control
-                        onChange={this.handleDepartureChange}
-                        onBlur={() => this.props.updateDepartureHandler(this.state.departure)}
-                        placeholder={"2022-08-05 12:45"}
-                        className={"w-25"}
-                        defaultValue={this.props.initialDeparture}
-                    />
-                    <Form.Text className={"text-muted"}>
-                        Please provide the start date and start time in 'jjjj-mm-dd hh:mm'
-                    </Form.Text>
-                </Form.Group>
-                <Form.Group className={"mb-3"} controlId={"formLimit"}>
-                    <Form.Label>Time Limit</Form.Label>
-                    <Form.Control
-                        onChange={this.handleTimeLimitChange}
-                        onBlur={() => this.props.updateTimeLimitHandler(this.state.timeLimit)}
-                        placeholder={"125:00"}
-                        className={"w-25"}
-                        defaultValue={this.props.initialTimelimit}
-                    />
-                    <Form.Text className={"text-muted"}>
-                        Please provide the max time limit for the event
-                    </Form.Text>
-                </Form.Group>
-            </>
-        );
-    }
-}
-
-class TtField extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            inputValue: ""
-        }
-    }
-
-    componentDidMount() {
-        this.setState({inputValue: this.props.inputValue});
-    }
-
-    handleChange = (e) => {
-        this.setState({inputValue: e.target.value});
-    }
-
-    render() {
-        return (
-            <div className={"input-group"}>
-                <Form.Control
-                    onBlur={() => this.props.updateInputHandler(this.props.stage, this.props.field, this.state.inputValue)}
-                    onChange={this.handleChange}
-                    defaultValue={this.props.inputValue}
-                    className={this.props.unit && "text-end"}
-                />
-                {this.props.unit && <div className="input-group-append">
-                    <span className="input-group-text">{this.props.unit}</span>
-                </div>}
-            </div>
-    );
-    }
-
-}
-
-class Stage extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <tr key={this.props.id}>
-                <td>
-                    <TtField
-                        field={"from"}
-                        stage={this.props.stage}
-                        inputValue={this.props.value.from}
-                        updateInputHandler={this.props.updateInputHandler}
-                    />
-                </td>
-                <td>
-                    <TtField
-                        field={"to"}
-                        stage={this.props.stage}
-                        inputValue={this.props.value.to}
-                        updateInputHandler={this.props.updateInputHandler}
-                    />
-                </td>
-                <td>
-                    <TtField
-                        field={"distance"}
-                        stage={this.props.stage}
-                        inputValue={this.props.value.distance}
-                        updateInputHandler={this.props.updateInputHandler}
-                        unit={"km"}
-                    />
-                </td>
-                <td>
-                    <TtField
-                        field={"climb"}
-                        stage={this.props.stage}
-                        inputValue={this.props.value.climb}
-                        updateInputHandler={this.props.updateInputHandler}
-                        unit={"m"}
-                    />
-                </td>
-                <td>
-                    <TtField
-                        field={"pause"}
-                        stage={this.props.stage}
-                        inputValue={this.props.value.pause}
-                        updateInputHandler={this.props.updateInputHandler}
-                        unit={"min"}
-                    />
-                </td>
-                <td>
-                    <Button onClick={() => this.props.clickRemoveStageHandler(this.props.id)} variant={"danger"}>{"Remove Stage"}</Button>
-                </td>
-            </tr>
-        );
-    }
 }
 
 class Timetable extends React.Component {
@@ -428,7 +279,6 @@ class Timetable extends React.Component {
                 distance: document.getElementById("input_distance").value,
                 climb: document.getElementById("input_climb").value,
                 pause: document.getElementById("input_pause").value,
-
             })
         });
 
@@ -440,13 +290,17 @@ class Timetable extends React.Component {
         document.getElementById("input_pause").value = "";
     }
 
-    updateInput(stage, field, value) {
-        console.log("updating stage: " + stage + " and field: " + field + " with value: " + value);
+    updateInput(stageId, field, value) {
+        console.log("updating stage: " + stageId + " and field: " + field + " with value: " + value);
         const stages = this.state.stages.slice();
-        stages[stage][field] = value;
+        stages.forEach((stage) => {
+            if (stage.id === stageId) {
+                stage[field] = value
+            }
+        })
         this.setState({
             stages: stages
-        });
+        }, function () {console.log(this.state.stages);});
      }
 
     removeStage(stageId) {
