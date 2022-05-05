@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import {DateTime, Duration} from 'luxon';
 import {Button, Form, Row} from "react-bootstrap";
 import {utils, writeFileXLSX} from 'xlsx';
