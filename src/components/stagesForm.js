@@ -79,7 +79,7 @@ export class StagesForm extends React.Component {
                     </div>
                 </td>
                 <td>
-                    <Button variant={"success"} onClick={() => this.props.addStageHandler}>{"Add Stage"}</Button>
+                    <Button variant={"success"} onClick={() => this.props.addStageHandler()}>{"Add Stage"}</Button>
                 </td>
             </tr>
         );
