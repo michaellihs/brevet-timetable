@@ -1,17 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {Button, Col, Container, Form, Row} from 'react-bootstrap';
+import {Col, Container, Row} from 'react-bootstrap';
 import {utils, writeFileXLSX} from 'xlsx';
 
 import {DepartureForm} from './components/departureForm';
-import {Stage} from './components/stage';
 import {Timetable} from './components/timetable';
 import events from './events';
 import {ArrivalTimes} from './components/arrivalTimes';
 import {copyToClipboard} from './util';
 import {StagesJsonDump} from './components/stagesJsonDump';
 import {EventSelector} from './components/eventSelector';
-import {CalculationParameters} from "./components/calculationParameters";
+import {CalculationParameters} from './components/calculationParameters';
+import {StagesForm} from './components/stagesForm';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -69,26 +69,12 @@ class App extends React.Component {
                 <Row>
                     <Col>
                         <h2>{"Stages"}</h2>
-                        <Form>
-                            <Row className={"mx-0"}>
-                                <table className="table timetable">
-                                    <thead>
-                                    <tr>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Distance</th>
-                                        <th>Climb</th>
-                                        <th>Pause</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {this.renderStages()}
-                                    {this.renderNewStage()}
-                                    </tbody>
-                                </table>
-                            </Row>
-                        </Form>
+                        <StagesForm
+                            stages={this.state.stages}
+                            addStageHandler={() => this.addStage()}
+                            updateInputHandler={(stage, field, value) => this.updateInput(stage, field, value)}
+                            removeStageHandler={(stageId) => this.removeStage(stageId)}
+                        />
                     </Col>
                 </Row>
                 <Row>
@@ -121,64 +107,6 @@ class App extends React.Component {
                     </Col>
                 </Row>
             </Container>
-        );
-    }
-
-    renderStages() {
-        return this.state.stages.map((stage) => {
-            return (
-                <Stage
-                    key={stage.id}
-                    id={stage.id}
-                    updateInputHandler={(stage, field, value) => this.updateInput(stage, field, value)}
-                    clickRemoveStageHandler={(stageId) => this.removeStage(stageId)}
-                    value={stage}
-                />
-            );
-        });
-    }
-
-    renderNewStage() {
-        return (
-            <tr>
-                <td>
-                    <div className={"input-group"}>
-                        <Form.Control placeholder={"Start CP"} id={"input_from"}/>
-                    </div>
-                </td>
-                <td>
-                    <div className={"input-group"}>
-                        <Form.Control placeholder={"Destination CP"} id={"input_to"}/>
-                    </div>
-                </td>
-                <td>
-                    <div className={"input-group"}>
-                        <Form.Control className={"text-end"} placeholder={"123"} id={"input_distance"}/>
-                        <div className="input-group-append">
-                            <span className="input-group-text">km</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div className={"input-group"}>
-                        <Form.Control className={"text-end"} placeholder={"1200"} id={"input_climb"}/>
-                        <div className="input-group-append">
-                            <span className="input-group-text">m</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div className={"input-group"}>
-                        <Form.Control className={"text-end"} placeholder={"30"} id={"input_pause"}/>
-                        <div className="input-group-append">
-                            <span className="input-group-text">min</span>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <Button variant={"success"} onClick={() => this.addStage()}>{"Add Stage"}</Button>
-                </td>
-            </tr>
         );
     }
 
@@ -256,7 +184,6 @@ class App extends React.Component {
     }
 }
 
-// ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
