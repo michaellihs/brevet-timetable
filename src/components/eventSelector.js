@@ -19,7 +19,7 @@ export class EventSelector extends React.Component {
                 <Form.Label>Link to this event</Form.Label>
                 <div className="input-group">
                     <input id="eventUrl" type="text" className="form-control" readOnly={true}
-                           value={`${window.location.protocol}//${window.location.host}/timetable?event=${encodeURIComponent(this.props.value)}`}
+                           value={`${window.location.protocol}//${window.location.host}/timetable?event=${encodeURIComponent(this.props.selectedEvent)}`}
                            placeholder="Some path"/>
                     <span className="input-group-btn">
                         <button className="btn btn-primary" type="button" id="copy-button"
