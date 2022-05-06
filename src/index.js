@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {Alert, Button, Col, Container, Form, Row} from 'react-bootstrap';
+import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 import {utils, writeFileXLSX} from 'xlsx';
 
 import {DepartureForm} from './components/departureForm';
@@ -11,6 +11,7 @@ import {ArrivalTimes} from './components/arrivalTimes';
 import {copyToClipboard} from './util';
 import {StagesJsonDump} from './components/stagesJsonDump';
 import {EventSelector} from './components/eventSelector';
+import {CalculationParameters} from "./components/calculationParameters";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -58,50 +59,11 @@ class App extends React.Component {
                     </Col>
                     <Col>
                         <h2>{"Parameters"}</h2>
-                        <Form>
-                            <Row>
-                                <Col>
-                                    <Form.Group className={"mb-3"} controlId={"minutesPerKm"}>
-                                        <Form.Label>Minutes / km</Form.Label>
-                                        <Form.Control
-                                            placeholder={"2"}
-                                            defaultValue={this.state.minutesPerKm}
-                                        />
-                                        <Form.Text className={"text-muted"}>
-                                            How many minutes do you need per kilometer
-                                        </Form.Text>
-                                    </Form.Group>
-                                </Col>
-                                <Col>
-                                    <Form.Group className={"mb-3"} controlId={"climbPerHour"}>
-                                        <Form.Label>m / h</Form.Label>
-                                        <Form.Control
-                                            placeholder={"2"}
-                                            defaultValue={this.state.climbPerHour}
-                                        />
-                                        <Form.Text className={"text-muted"}>
-                                            How many meters do you climb per hour
-                                        </Form.Text>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <Alert variant={"success"}>
-                                        The duration per stage is calculated as:
-                                        <pre>(distance * minutesPerKm) + (climb / climbPerHour * 60)</pre>
-                                    </Alert>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <Form.Group className={"mb-3"}>
-                                        <Button variant={"primary"}
-                                                onClick={() => this.updateParameters()}>{"Apply"}</Button>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                        </Form>
+                        <CalculationParameters
+                            minutesPerKmDefaultValue={this.state.minutesPerKm}
+                            climbPerHourDefaultValue={this.state.climbPerHour}
+                            updateHandler={() => this.updateParameters()}
+                        />
                     </Col>
                 </Row>
                 <Row>
