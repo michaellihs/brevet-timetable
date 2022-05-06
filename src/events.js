@@ -42,4 +42,104 @@ events.set("BRM 200", [
     {"id": "9dfdee6f-78a8-4820-978b-b418b5890785", "from": "Stein am Rhein", "to": "Buch", "distance": 10.00, "climb": 40, "pause": 0},
 ]);
 
+events.set("BRM 600 - Talwind", [{
+    "id": "32e6d13c-8244-4639-a0db-8b3ac1020f22",
+    "from": "Buch",
+    "to": "Tuttlingen",
+    "distance": "52",
+    "climb": "560",
+    "pause": "30"
+}, {
+    "id": "63aa276d-212d-4f66-be7c-2ede5bf0fde0",
+    "from": "Tuttlingen",
+    "to": "Sigmaringen",
+    "distance": "52",
+    "climb": "450",
+    "pause": "30"
+}, {
+    "id": "579ee789-d3a9-428b-8da3-7b95c1204395",
+    "from": "Sigmaringen",
+    "to": "Moessingen",
+    "distance": "51",
+    "climb": "570",
+    "pause": "30"
+}, {
+    "id": "d2c99963-1b9b-48f4-9d0f-bf80c76e03ee",
+    "from": "Moessingen",
+    "to": "Horb",
+    "distance": "36",
+    "climb": "400",
+    "pause": "30"
+}, {
+    "id": "9c46cee0-38f0-406e-8c2e-fd69b4c48fb0",
+    "from": "Horb",
+    "to": "Klosterreichenbach",
+    "distance": "37",
+    "climb": "650",
+    "pause": "30"
+}, {
+    "id": "2a891bb4-ad11-4d07-b3e6-0f755c0d02ce",
+    "from": "Klosterreichenbach",
+    "to": "Gaggenau",
+    "distance": "47",
+    "climb": "360",
+    "pause": "30"
+}, {
+    "id": "6a356a98-ba50-4303-bc2b-9136777858b4",
+    "from": "Gaggenau",
+    "to": "Haguenau",
+    "distance": "52",
+    "climb": "130",
+    "pause": "30"
+}, {
+    "id": "03aa2aa3-ba6f-4a45-a1e1-ae17fe0ff565",
+    "from": "Haguenau",
+    "to": "Strassbourg",
+    "distance": "37",
+    "climb": "120",
+    "pause": "60"
+}, {
+    "id": "7ed01fee-6e23-4209-938d-faace7f3e245",
+    "from": "Strassbourg",
+    "to": "Breisach",
+    "distance": "68",
+    "climb": "100",
+    "pause": "30"
+}, {
+    "id": "60c9b20d-9474-439f-acd0-ebb4f0b7c112",
+    "from": "Breisach",
+    "to": "Basel",
+    "distance": "55",
+    "climb": "100",
+    "pause": "30"
+}, {
+    "id": "d8ab03b5-880a-4326-ae17-94735a1202aa",
+    "from": "Basel",
+    "to": "Bad Saeckingen",
+    "distance": "38",
+    "climb": "160",
+    "pause": "30"
+}, {
+    "id": "e24b1c07-d5df-4a75-8e80-0f543580155c",
+    "from": "Bad Saeckingen",
+    "to": "Koblenz",
+    "distance": "28",
+    "climb": "190",
+    "pause": "30"
+}, {
+    "id": "6cef10ae-7fa7-4e8d-9174-d3c25c4c14fc",
+    "from": "Koblenz",
+    "to": "Schaffhausen",
+    "distance": "45",
+    "climb": "390",
+    "pause": "30"
+}, {
+    "id": "866e1edc-fdd3-49b2-8f64-f634d3665a59",
+    "from": "Schaffhausen",
+    "to": "Buch",
+    "distance": "15",
+    "climb": "190",
+    "pause": "0"
+}]);
+
 export default events;

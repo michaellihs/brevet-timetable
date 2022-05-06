@@ -86,8 +86,14 @@ class ArrivalTimes extends React.Component {
 class Timetable extends React.Component {
     constructor(props) {
         super(props);
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const event = urlParams.get('event')
+        console.log('Selected event ' + event);
+
         this.state = {
-            stages: events.get('LEL 2022'),
+            stages: events.get((event ? event :'LEL 2022')),
             departure: "2022-08-07 12:45",
             timeLimit: "125:00",
             minutesPerKm: 2,
@@ -233,6 +239,20 @@ class Timetable extends React.Component {
                     <Col>
                         <h2>{"Arrival times"}</h2>
                         <ArrivalTimes stages={this.state.stages} params={{startTime: this.state.departure, timeLimit: this.state.timeLimit, minutesPerKm: this.state.minutesPerKm, climbPerHour: this.state.climbPerHour}} />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <h2>{"JSON dump"}</h2>
+                        <Form>
+                            <Form.Group className={"mb-3"} controlId={"jsonDump"}>
+                                <Form.Label>JSON dump of stages</Form.Label>
+                                {/*TODO add copy button http://davidzchen.com/tech/2016/01/19/bootstrap-copy-to-clipboard.html*/}
+                                <Form.Control
+                                    readOnly={true} value={JSON.stringify(this.state.stages)}
+                                />
+                            </Form.Group>
+                        </Form>
                     </Col>
                 </Row>
             </Container>
