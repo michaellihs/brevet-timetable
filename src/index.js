@@ -84,12 +84,13 @@ class ArrivalTimes extends React.Component {
 }
 
 class Timetable extends React.Component {
+
     constructor(props) {
         super(props);
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const event = urlParams.get('event')
+        const event = urlParams.get('event');
         console.log('Selected event ' + event);
 
         this.state = {
@@ -98,7 +99,8 @@ class Timetable extends React.Component {
             timeLimit: "125:00",
             minutesPerKm: 2,
             climbPerHour: 450,
-        }
+            selectedEvent: event ? event :'LEL 2022'
+        };
     }
 
     handleStartTimeAndTimeLimitChange(departure, timeLimit) {
@@ -113,6 +115,12 @@ class Timetable extends React.Component {
         const alignRight = {
             textAlign: 'right'
         };
+
+        function copyToClipboard(inputId) {
+            const input = document.getElementById(inputId);
+            navigator.clipboard.writeText(input.value).then(r => console.log('Copied value ' + input.value + ' to clipboard'));
+        }
+
         return (
             <Container fluid>
                 <Row>
@@ -120,11 +128,25 @@ class Timetable extends React.Component {
                         <h2>{"Select event"}</h2>
                         <Form.Group className={"mb-3"}>
                             <Form.Label>Select event</Form.Label>
-                            <Form.Select onChange={(e) => this.selectEvent(e)}>
+                            <Form.Select value={this.state.selectedEvent} onChange={(e) => this.selectEvent(e)}>
                                 {Array.from(events).map(([eventName, event]) => {
                                     return (<option key={eventName} value={eventName}>{eventName}</option>);
                                 })}
                             </Form.Select>
+                        </Form.Group>
+                        <Form.Group className={"mb-3"}>
+                            <Form.Label>Link to this timetable</Form.Label>
+                            <div className="input-group">
+                                <input id="eventUrl" type="text" className="form-control" readOnly={true}
+                                       value={`${window.location.protocol}//${window.location.host}/timetable?event=${encodeURIComponent(this.state.selectedEvent)}`} placeholder="Some path" />
+                                <span className="input-group-btn">
+                                    <button className="btn btn-primary" type="button" id="copy-button"
+                                        data-toggle="tooltip" data-placement="button"
+                                        title="Copy to Clipboard"
+                                        onClick={() => copyToClipboard('eventUrl')}
+                                    >Copy</button>
+                                </span>
+                            </div>
                         </Form.Group>
                     </Col>
                     <Col>
@@ -245,12 +267,19 @@ class Timetable extends React.Component {
                     <Col>
                         <h2>{"JSON dump"}</h2>
                         <Form>
-                            <Form.Group className={"mb-3"} controlId={"jsonDump"}>
+                            <Form.Group className={"mb-3"}>
                                 <Form.Label>JSON dump of stages</Form.Label>
-                                {/*TODO add copy button http://davidzchen.com/tech/2016/01/19/bootstrap-copy-to-clipboard.html*/}
-                                <Form.Control
-                                    readOnly={true} value={JSON.stringify(this.state.stages)}
-                                />
+                                <div className="input-group">
+                                    <input id="jsonDump" type="text" className="form-control" readOnly={true}
+                                           value={JSON.stringify(this.state.stages)} />
+                                    <span className="input-group-btn">
+                                    <button className="btn btn-primary" type="button" id="copy-button"
+                                            data-toggle="tooltip" data-placement="button"
+                                            title="Copy to Clipboard"
+                                            onClick={() => copyToClipboard('jsonDump')}
+                                    >Copy</button>
+                                </span>
+                                </div>
                             </Form.Group>
                         </Form>
                     </Col>
@@ -414,7 +443,10 @@ class Timetable extends React.Component {
 
     selectEvent(event) {
         console.log("select event: " + event.target.value);
-        this.setState({stages: events.get(event.target.value)});
+        this.setState({
+            stages: events.get(event.target.value),
+            selectedEvent: event.target.value,
+        });
     }
 
     updateParameters() {
