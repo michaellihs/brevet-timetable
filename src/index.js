@@ -2,12 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {Alert, Button, Col, Container, Form, Row} from 'react-bootstrap';
 import {utils, writeFileXLSX} from 'xlsx';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import {DepartureForm} from './components/departureForm';
 import {Stage} from './components/stage';
 import {Timetable} from './components/timetable';
 import events from './events';
 import {ArrivalTimes} from './components/arrivalTimes';
+import {copyToClipboard} from './util';
+import {StagesJsonDump} from './components/stagesJsonDump';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 class App extends React.Component {
@@ -31,10 +35,6 @@ class App extends React.Component {
     }
 
     render() {
-        function copyToClipboard(inputId) {
-            const input = document.getElementById(inputId);
-            navigator.clipboard.writeText(input.value).then(r => console.log('Copied value ' + input.value + ' to clipboard'));
-        }
 
         return (
             <Container fluid>
@@ -172,22 +172,7 @@ class App extends React.Component {
                 <Row>
                     <Col>
                         <h2>{"JSON dump"}</h2>
-                        <Form>
-                            <Form.Group className={"mb-3"}>
-                                <Form.Label>JSON dump of stages</Form.Label>
-                                <div className="input-group">
-                                    <input id="jsonDump" type="text" className="form-control" readOnly={true}
-                                           value={JSON.stringify(this.state.stages)}/>
-                                    <span className="input-group-btn">
-                                    <button className="btn btn-primary" type="button" id="copy-button"
-                                            data-toggle="tooltip" data-placement="button"
-                                            title="Copy to Clipboard"
-                                            onClick={() => copyToClipboard('jsonDump')}
-                                    >Copy</button>
-                                </span>
-                                </div>
-                            </Form.Group>
-                        </Form>
+                        <StagesJsonDump stages={this.state.stages} onClick={() => copyToClipboard('jsonDump')}/>
                     </Col>
                 </Row>
             </Container>
