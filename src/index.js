@@ -1,37 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {DateTime, Duration} from 'luxon';
 import {Button, Container, Form, Row, Col, Alert} from "react-bootstrap";
 import {utils, writeFileXLSX} from 'xlsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {DepartureForm} from "./components/departureForm";
 import {Stage} from "./components/stage";
+import {Timetable} from "./components/timetable";
 import events from "./events";
+import {getTimetableFromStages} from "./domain/calculation";
 
-
-function DistanceField(props) {
-    return (props.value.toLocaleString('en-US', {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-        useGrouping: false
-    }) + " km");
-}
-
-function SpeedField(props) {
-    return (props.value.toLocaleString('en-US', {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-        useGrouping: false
-    }) + " km/h");
-}
-
-function DurationField(props) {
-    return (Duration.fromMillis(props.value * 60 * 1000).toFormat("hh:mm"))
-}
-
-function TimeField(props) {
-    return props.value.toFormat("dd.LL. HH:mm");
-}
 
 class ArrivalTimes extends React.Component {
     render() {
@@ -83,7 +60,7 @@ class ArrivalTimes extends React.Component {
     }
 }
 
-class Timetable extends React.Component {
+class App extends React.Component {
 
     constructor(props) {
         super(props);
@@ -103,19 +80,7 @@ class Timetable extends React.Component {
         };
     }
 
-    handleStartTimeAndTimeLimitChange(departure, timeLimit) {
-        console.log('change departure: ' + departure + ' and time limit: ' + timeLimit);
-        this.setState({
-            timeLimit: timeLimit,
-            departure: departure,
-        });
-    }
-
     render() {
-        const alignRight = {
-            textAlign: 'right'
-        };
-
         function copyToClipboard(inputId) {
             const input = document.getElementById(inputId);
             navigator.clipboard.writeText(input.value).then(r => console.log('Copied value ' + input.value + ' to clipboard'));
@@ -138,12 +103,13 @@ class Timetable extends React.Component {
                             <Form.Label>Link to this timetable</Form.Label>
                             <div className="input-group">
                                 <input id="eventUrl" type="text" className="form-control" readOnly={true}
-                                       value={`${window.location.protocol}//${window.location.host}/timetable?event=${encodeURIComponent(this.state.selectedEvent)}`} placeholder="Some path" />
+                                       value={`${window.location.protocol}//${window.location.host}/timetable?event=${encodeURIComponent(this.state.selectedEvent)}`}
+                                       placeholder="Some path"/>
                                 <span className="input-group-btn">
                                     <button className="btn btn-primary" type="button" id="copy-button"
-                                        data-toggle="tooltip" data-placement="button"
-                                        title="Copy to Clipboard"
-                                        onClick={() => copyToClipboard('eventUrl')}
+                                            data-toggle="tooltip" data-placement="button"
+                                            title="Copy to Clipboard"
+                                            onClick={() => copyToClipboard('eventUrl')}
                                     >Copy</button>
                                 </span>
                             </div>
@@ -197,7 +163,8 @@ class Timetable extends React.Component {
                             <Row>
                                 <Col>
                                     <Form.Group className={"mb-3"}>
-                                        <Button variant={"primary"} onClick={() => this.updateParameters()}>{"Apply"}</Button>
+                                        <Button variant={"primary"}
+                                                onClick={() => this.updateParameters()}>{"Apply"}</Button>
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -232,35 +199,24 @@ class Timetable extends React.Component {
                 <Row>
                     <Col>
                         <h2>{"Calculated timetable"}</h2>
-                        <table className="table timetable" id={"calcTable"}>
-                            <thead>
-                                <tr className={"d-flex"}>
-                                    <th className={"col-2"}>stage</th>
-                                    <th style={alignRight} className={"col-1"}>departure</th>
-                                    <th style={alignRight} className={"col-1"}>arrival</th>
-                                    <th style={alignRight} className={"col-1"}>stage distance</th>
-                                    <th style={alignRight} className={"col-1"}>total distance</th>
-                                    <th style={alignRight} className={"col-1"}>stage climb</th>
-                                    <th style={alignRight} className={"col-1"}>total climb</th>
-                                    <th style={alignRight} className={"col-1"}>pause</th>
-                                    <th style={alignRight} className={"col-1"}>stage time</th>
-                                    <th style={alignRight} className={"col-1"}>total time</th>
-                                    <th style={alignRight} className={"col-1"}>average</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {this.renderStagesStatic()}
-                            </tbody>
-                        </table>
-                        <Form.Group className={"mb-3"}>
-                            <Button variant={"success"} onClick={() => this.exportToExcel()}>{"Excel export"}</Button>
-                        </Form.Group>
+                        <Timetable
+                            excelExport={this.exportToExcel}
+                            stages={this.state.stages}
+                            departure={this.state.departure}
+                            minutesPerKm={this.state.minutesPerKm}
+                            climbPerHour={this.state.climbPerHour}
+                        />
                     </Col>
                 </Row>
                 <Row>
                     <Col>
                         <h2>{"Arrival times"}</h2>
-                        <ArrivalTimes stages={this.state.stages} params={{startTime: this.state.departure, timeLimit: this.state.timeLimit, minutesPerKm: this.state.minutesPerKm, climbPerHour: this.state.climbPerHour}} />
+                        <ArrivalTimes stages={this.state.stages} params={{
+                            startTime: this.state.departure,
+                            timeLimit: this.state.timeLimit,
+                            minutesPerKm: this.state.minutesPerKm,
+                            climbPerHour: this.state.climbPerHour
+                        }}/>
                     </Col>
                 </Row>
                 <Row>
@@ -271,7 +227,7 @@ class Timetable extends React.Component {
                                 <Form.Label>JSON dump of stages</Form.Label>
                                 <div className="input-group">
                                     <input id="jsonDump" type="text" className="form-control" readOnly={true}
-                                           value={JSON.stringify(this.state.stages)} />
+                                           value={JSON.stringify(this.state.stages)}/>
                                     <span className="input-group-btn">
                                     <button className="btn btn-primary" type="button" id="copy-button"
                                             data-toggle="tooltip" data-placement="button"
@@ -286,50 +242,6 @@ class Timetable extends React.Component {
                 </Row>
             </Container>
         );
-    }
-
-    renderStagesStatic() {
-        const divStyle = {
-            textAlign: 'right'
-        };
-
-        let totalDistance = 0;
-        let totalClimb = 0;
-        let totalTime = 0;
-        let departure = DateTime.fromFormat(this.state.departure, "yyyy-MM-dd HH:mm")
-        let arrival = departure
-
-        const minutesPerKm = Number(this.state.minutesPerKm);
-        const climbPerHour = Number(this.state.climbPerHour);
-
-        return this.state.stages.map((stage) => {
-            totalDistance += Number(stage.distance);
-            totalClimb += Number(stage.climb);
-            const stageDuration = getStageDuration(stage.distance, stage.climb, minutesPerKm, climbPerHour);
-            totalTime += stageDuration + Number(stage.pause);
-            arrival = departure.plus({minutes: stageDuration});
-            const average = Number(stage.distance) / stageDuration * 60;
-
-            const result = (
-                <tr key={stage.id} className={"d-flex"}>
-                    <td className={"col-2"}><strong>{stage.from} - {stage.to}</strong></td>
-                    <td className={"col-1"} style={divStyle}><TimeField value={departure} /></td>
-                    <td className={"col-1"} style={divStyle}><TimeField value={arrival} /></td>
-                    <td className={"col-1"} style={divStyle}><DistanceField value={stage.distance}/></td>
-                    <td className={"col-1"} style={divStyle}><DistanceField value={totalDistance}/></td>
-                    <td className={"col-1"} style={divStyle}>{stage.climb} m</td>
-                    <td className={"col-1"} style={divStyle}>{totalClimb} m</td>
-                    <td className={"col-1"} style={divStyle}><DurationField value={stage.pause} /></td>
-                    <td className={"col-1"} style={divStyle}><DurationField value={stageDuration} /></td>
-                    <td className={"col-1"} style={divStyle}><DurationField value={totalTime} /></td>
-                    <td className={"col-1"} style={divStyle}><SpeedField value={average} /></td>
-                </tr>
-            );
-            departure = arrival.plus({minutes: stage.pause});
-            arrival = arrival.plus({minutes: stage.pause});
-
-            return result;
-        });
     }
 
     renderStages() {
@@ -433,10 +345,9 @@ class Timetable extends React.Component {
             })});
     }
 
-    exportToExcel() {
-        console.log('export to excel');
-        const table = document.getElementById('calcTable');
-        console.log(table);
+    exportToExcel(tableId) {
+        console.log('export to excel - tableId: ' + tableId);
+        const table = document.getElementById(tableId);
         const workbook = utils.table_to_book(table);
         writeFileXLSX(workbook, 'timetable.xlsx');
     }
@@ -449,6 +360,14 @@ class Timetable extends React.Component {
         });
     }
 
+    handleStartTimeAndTimeLimitChange(departure, timeLimit) {
+        console.log('change departure: ' + departure + ' and time limit: ' + timeLimit);
+        this.setState({
+            timeLimit: timeLimit,
+            departure: departure,
+        });
+    }
+
     updateParameters() {
         this.setState({
             minutesPerKm: Number(document.getElementById("minutesPerKm").value),
@@ -457,49 +376,7 @@ class Timetable extends React.Component {
     }
 }
 
-// TODO test me & use me for static timetable calculation
-function getTimetableFromStages(stages, startTime, timeLimit, minutesPerKm, climbPerHour) {
-
-    let totalDistance = 0;
-    let totalClimb = 0;
-    let totalTime = 0;
-    let departure = DateTime.fromFormat(startTime, "yyyy-MM-dd HH:mm")
-    let arrival = departure
-
-    return stages.map((stage) => {
-        totalDistance += Number(stage.distance);
-        totalClimb += Number(stage.climb);
-        const stageDuration = getStageDuration(stage.distance, stage.climb, minutesPerKm, climbPerHour);
-        totalTime += stageDuration + Number(stage.pause);
-        arrival = departure.plus({minutes: stageDuration});
-        const average = Number(stage.distance) / stageDuration * 60;
-
-        const entry = {
-            from: stage.from,
-            to: stage.to,
-            departure: departure,
-            arrival: arrival,
-            distance: stage.distance,
-            climb: stage.climb,
-            pause: stage.pause,
-            totalDistance: totalDistance,
-            totalClimb: totalClimb,
-            totalTime: totalTime,
-            average: average,
-        };
-
-        departure = arrival.plus({minutes: stage.pause});
-        arrival = arrival.plus({minutes: stage.pause});
-
-        return entry;
-    });
-}
-
-function getStageDuration(distance, climb, minutesPerKm, climbPerHour) {
-    return (distance * minutesPerKm) + (climb / climbPerHour * 60);
-}
-
 // ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<Timetable />);
+root.render(<App />);
