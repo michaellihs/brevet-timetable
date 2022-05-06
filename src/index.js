@@ -10,6 +10,7 @@ import events from './events';
 import {ArrivalTimes} from './components/arrivalTimes';
 import {copyToClipboard} from './util';
 import {StagesJsonDump} from './components/stagesJsonDump';
+import {EventSelector} from './components/eventSelector';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -41,29 +42,11 @@ class App extends React.Component {
                 <Row>
                     <Col>
                         <h2>{"Select event"}</h2>
-                        <Form.Group className={"mb-3"}>
-                            <Form.Label>Select event</Form.Label>
-                            <Form.Select value={this.state.selectedEvent} onChange={(e) => this.selectEvent(e)}>
-                                {Array.from(events).map(([eventName, event]) => {
-                                    return (<option key={eventName} value={eventName}>{eventName}</option>);
-                                })}
-                            </Form.Select>
-                        </Form.Group>
-                        <Form.Group className={"mb-3"}>
-                            <Form.Label>Link to this timetable</Form.Label>
-                            <div className="input-group">
-                                <input id="eventUrl" type="text" className="form-control" readOnly={true}
-                                       value={`${window.location.protocol}//${window.location.host}/timetable?event=${encodeURIComponent(this.state.selectedEvent)}`}
-                                       placeholder="Some path"/>
-                                <span className="input-group-btn">
-                                    <button className="btn btn-primary" type="button" id="copy-button"
-                                            data-toggle="tooltip" data-placement="button"
-                                            title="Copy to Clipboard"
-                                            onClick={() => copyToClipboard('eventUrl')}
-                                    >Copy</button>
-                                </span>
-                            </div>
-                        </Form.Group>
+                        <EventSelector
+                            selectedEvent={this.state.selectedEvent}
+                            onChange={(e) => this.selectEvent(e)}
+                            onClick={() => copyToClipboard('eventUrl')}
+                        />
                     </Col>
                     <Col>
                         <h2>{"Departure and time limit"}</h2>
