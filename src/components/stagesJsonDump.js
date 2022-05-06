@@ -1,6 +1,6 @@
-import React from "react";
-import {Form} from "react-bootstrap";
-import * as PropTypes from "prop-types";
+import React from 'react';
+import {Form} from 'react-bootstrap';
+import * as PropTypes from 'prop-types';
 
 export class StagesJsonDump extends React.Component {
     render() {

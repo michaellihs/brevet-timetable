@@ -1,8 +1,8 @@
 import React from 'react';
-import {Duration} from "luxon";
-import {Button, Form} from "react-bootstrap";
-import * as PropTypes from "prop-types";
-import {getTimetableFromStages} from "../domain/calculation";
+import {Duration} from 'luxon';
+import {Button, Form} from 'react-bootstrap';
+import * as PropTypes from 'prop-types';
+import {getTimetableFromStages} from '../domain/calculation';
 
 
 function DistanceField(props) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form} from 'react-bootstrap';
-import events from '../events';
 import * as PropTypes from 'prop-types';
+import events from '../events';
 
 
 export class EventSelector extends React.Component {
@@ -16,18 +16,18 @@ export class EventSelector extends React.Component {
                 </Form.Select>
             </Form.Group>
             <Form.Group className={"mb-3"}>
-                <Form.Label>Link to this timetable</Form.Label>
+                <Form.Label>Link to this event</Form.Label>
                 <div className="input-group">
                     <input id="eventUrl" type="text" className="form-control" readOnly={true}
                            value={`${window.location.protocol}//${window.location.host}/timetable?event=${encodeURIComponent(this.props.value)}`}
                            placeholder="Some path"/>
                     <span className="input-group-btn">
-                                    <button className="btn btn-primary" type="button" id="copy-button"
-                                            data-toggle="tooltip" data-placement="button"
-                                            title="Copy to Clipboard"
-                                            onClick={this.props.onClick}
-                                    >Copy</button>
-                                </span>
+                        <button className="btn btn-primary" type="button" id="copy-button"
+                                data-toggle="tooltip" data-placement="button"
+                                title="Copy to Clipboard"
+                                onClick={this.props.onClick}
+                        >Copy</button>
+                    </span>
                 </div>
             </Form.Group>
         </>;

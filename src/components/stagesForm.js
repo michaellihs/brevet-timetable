@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Form, Row} from 'react-bootstrap';
 import {Stage} from './stage';
-import * as PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 
 export class StagesForm extends React.Component {
     render() {
