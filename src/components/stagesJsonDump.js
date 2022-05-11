@@ -1,9 +1,13 @@
 import React from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
+import {generatePath} from "react-router-dom";
 
 export class StagesJsonDump extends React.Component {
     render() {
+        const iframeWidgetPath = generatePath("/#/timetable/widget/:eventId", {
+            eventId: encodeURIComponent(this.props.selectedEvent)
+        })
         return <Form>
             <Form.Group className={"mb-3"}>
                 <Row>
@@ -49,7 +53,7 @@ export class StagesJsonDump extends React.Component {
                             <Form.Label>iFrame code</Form.Label>
                             <div className="input-group">
                                 <input id="iframeCode" type="text" className="form-control" readOnly={true}
-                                       value={`<iframe src="${window.location.protocol}//${window.location.host}/timetable/widget/${encodeURIComponent(this.props.selectedEvent)}"></iframe>`}/>
+                                       value={`<iframe src="${window.location.protocol}//${window.location.host}${iframeWidgetPath}"></iframe>`}/>
                                 <span className="input-group-btn">
                                     <button className="btn btn-primary" type="button" id="copy-button-iframe"
                                             data-toggle="tooltip" data-placement="button"
