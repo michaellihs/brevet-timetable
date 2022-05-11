@@ -394,6 +394,78 @@ events.set("BRM 200", [
     },
 ]);
 
+events.set("BRM 600 - Alpenluft+", [{
+    "id": "8ae562e5-08e7-4319-b54e-cbcf201c77a3",
+    "from": "Buch",
+    "to": "Lindau",
+    "distance": "99",
+    "climb": "250",
+    "pause": "0"
+}, {
+    "id": "cea3ac2c-0e81-446d-b2ff-bfc3a7918a19",
+    "from": "Lindau",
+    "to": "Schwägalp",
+    "distance": "82",
+    "climb": "1000",
+    "pause": "0"
+}, {
+    "id": "3c949244-bce1-4dad-aadb-94f50781dbc6",
+    "from": "Schwägalp",
+    "to": "Berggasthaus Palfries",
+    "distance": "64",
+    "climb": "1000",
+    "pause": "0"
+}, {
+    "id": "eed86e7f-ab74-4236-a777-4e294651ea67",
+    "from": "Berggasthaus Palfries",
+    "to": "Rossweidhöchi",
+    "distance": "55",
+    "climb": "1000",
+    "pause": "0"
+}, {
+    "id": "35cd16ac-0b2b-45f0-a4f5-aa4b37f7947d",
+    "from": "Rossweidhöchi",
+    "to": "Hohle Gasse",
+    "distance": "73",
+    "climb": "1000",
+    "pause": "0"
+}, {
+    "id": "4e0fdd94-7694-4374-9fa0-5799844b0407",
+    "from": "Hohle Gasse",
+    "to": "Zürich",
+    "distance": "45",
+    "climb": "600",
+    "pause": "0"
+}, {
+    "id": "5bbe04c1-772f-47d7-81ab-679973f0cae1",
+    "from": "Zürich",
+    "to": "Oberer Zürisee",
+    "distance": "50",
+    "climb": "500",
+    "pause": "0"
+}, {
+    "id": "3532737a-8e3e-49a9-9fc4-9b105f8a063f",
+    "from": "Oberer Zürisee",
+    "to": "Monte Diggelmann",
+    "distance": "46",
+    "climb": "500",
+    "pause": "0"
+}, {
+    "id": "1ff1f560-c90f-41fb-bfeb-35b87ab79dd8",
+    "from": "Monte Diggelmann",
+    "to": "Pfäffikersee",
+    "distance": "27",
+    "climb": "600",
+    "pause": "0"
+}, {
+    "id": "93b2c104-0914-463a-b02a-8788f3b457ae",
+    "from": "Pfäffikersee",
+    "to": "Buch",
+    "distance": "78",
+    "climb": "1000",
+    "pause": "0"
+}])
+
 events.set("BRM 600 - Talwind", [{
     "id": "32e6d13c-8244-4639-a0db-8b3ac1020f22",
     "from": "Buch",
