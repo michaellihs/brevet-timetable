@@ -12,6 +12,22 @@ function Row(props) {
     )
 }
 
+function SpeedField(props) {
+    return (props.value.toLocaleString('en-US', {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+        useGrouping: false
+    }) + " km/h");
+}
+
+function DistanceField(props) {
+    return (props.value.toLocaleString('en-US', {
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+        useGrouping: false
+    }) + " km");
+}
+
 export class AudaxSuisseTimetable extends React.Component {
 
     render() {
@@ -49,7 +65,7 @@ export class AudaxSuisseTimetable extends React.Component {
                 </tr>
                 <tr>
                     <td>{timetables[0].stages[0].from}</td>
-                    <td>0</td>
+                    <td><DistanceField value={0} /></td>
                     {timetables.map((timetable, index) => {
                         return (
                             <Row key={"2a1d04ca-99bc-433a-b7b7-d2cd799f3e81_zero_row_" + index} stage={{id: "2a1d04ca-99bc-433a-b7b7-d2cd799f3e81" ,to: timetable.stages[0].from, distance: 0, climb: 0, arrival: DateTime.fromFormat(startTime, "yyyy-MM-dd HH:mm")}} />
@@ -60,7 +76,7 @@ export class AudaxSuisseTimetable extends React.Component {
                     return (
                         <tr key={timetables[0].stages[stageIndex].id}>
                             <td>{timetables[0].stages[stageIndex].to}</td>
-                            <td>{timetables[0].stages[stageIndex].totalDistance}</td>
+                            <td><DistanceField value={timetables[0].stages[stageIndex].totalDistance} /></td>
                             {timetables.map((timetable, timetableIndex) => {
                                 return(
                                     <Row key={timetable.stages[stageIndex].id + "_" + timetableIndex} stage={timetable.stages[stageIndex]}/>
