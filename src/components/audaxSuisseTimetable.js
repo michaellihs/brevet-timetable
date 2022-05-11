@@ -22,6 +22,7 @@ export class AudaxSuisseTimetable extends React.Component {
            return {average: average, stages: getTimetableForAverage(stages, startTime, average)};
         });
         return (
+            // TODO check this doc for proper layouting the table https://www.w3.org/WAI/tutorials/tables/irregular/
             <table className={"table"}>
                 <col />
                 {timetables.map((timetable, index) => {
