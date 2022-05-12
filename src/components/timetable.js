@@ -75,8 +75,8 @@ export class Timetable extends React.Component {
             return (
                 <tr key={stage.id}>
                     <td className={"col-2"}><strong >{stage.from} - {stage.to}</strong></td>
-                    <td className={"col-1 align-right"}><TimeField value={stage.arrival} /></td>
                     <td className={"col-1 align-right"}><TimeField value={stage.departure} /></td>
+                    <td className={"col-1 align-right"}><TimeField value={stage.arrival} /></td>
                     <td className={"col-1 align-right"}><DistanceField value={stage.distance}/></td>
                     <td className={"col-1 align-right"}><DistanceField value={stage.totalDistance}/></td>
                     <td className={"col-1 align-right"}>{stage.climb} m</td>
