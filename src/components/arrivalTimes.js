@@ -12,7 +12,7 @@ export class ArrivalTimes extends React.Component {
         const days = this.getDaysFromTimetable(timetable);
 
         return (
-            <table className={"table"}>
+            <table className={"table tr-hover"}>
                 <thead>
                 <tr>
                     <th></th>

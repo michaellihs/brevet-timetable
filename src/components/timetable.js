@@ -37,7 +37,7 @@ export class Timetable extends React.Component {
 
         return (
             <>
-                <table className="table timetable" id={"calcTable"}>
+                <table className="table timetable tr-hover" id={"calcTable"}>
                     <thead key={"thead"}>
                     <tr key={"thead-tr"} className={"d-flex"}>
                         <th key={"stage"} className={"col-2"}>stage</th>
