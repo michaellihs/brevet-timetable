@@ -1,0 +1,1 @@
+export const DEFAULT_AVERAGES = [15, 20, 25, 30];

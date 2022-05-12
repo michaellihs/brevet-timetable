@@ -2,11 +2,13 @@ import React from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 import {generatePath} from "react-router-dom";
+import {DEFAULT_AVERAGES} from "../util/constants";
 
 export class StagesJsonDump extends React.Component {
     render() {
-        const iframeWidgetPath = generatePath("/#/timetable/widget/:eventId", {
-            eventId: encodeURIComponent(this.props.selectedEvent)
+        const iframeWidgetPath = generatePath("/#/timetable/widget/:eventId?averages=:averages", {
+            eventId: encodeURIComponent(this.props.selectedEvent),
+            averages: DEFAULT_AVERAGES
         })
         return <Form>
             <Form.Group className={"mb-3"}>

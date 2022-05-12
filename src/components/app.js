@@ -101,7 +101,7 @@ export class App extends React.Component {
                 <Row>
                     <Col>
                         <h2>{"Arrival times based on average"}</h2>
-                        <AudaxSuisseTimetable event={this.state.stages} />
+                        <AudaxSuisseTimetable averages={[15, 20, 25, 30]} event={this.state.stages} />
                     </Col>
                 </Row>
                 <Row>

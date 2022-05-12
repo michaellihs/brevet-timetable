@@ -1,6 +1,7 @@
 import React from 'react';
 import {getDateTime, timeFromDateTime, weekdayFromDateTime} from "../util/date";
 import {uuid} from "../util/uuid";
+import {DEFAULT_AVERAGES} from "../util/constants";
 
 // TODO localize and translate labels
 
@@ -32,7 +33,7 @@ function calcArrivalTime(departure, distance, average) {
 function calculateRowSpans(arrivalTimes) {
     const daysOnly = arrivalTimes.map((arrivalTimesForStage) => {
         return arrivalTimesForStage.filter((_, index) => {
-            return index % 2 == 0;
+            return index % 2 === 0;
         });
     });
 
@@ -92,15 +93,15 @@ function generateStageRows(stages, startTime, timeLimit, averages) {
             rowSpans: rowSpans[index],
         });
     });
-    console.log(stageRows);
     return stageRows;
 }
 
 export class AudaxSuisseTimetable extends React.Component {
 
     render() {
-        // TODO make averages time parameterizable
-        const averages = [15, 20, 25, 30];
+        const event = this.props.event;
+        // TODO add average for time limit
+        const averages = this.props.averages || DEFAULT_AVERAGES;
         // TODO make start time parameterizable
         const startTime = getDateTime("2022-06-30 20:00");
         const tableData = {
@@ -110,10 +111,9 @@ export class AudaxSuisseTimetable extends React.Component {
             header2: {
                 cols: generateHeader2Cols(averages.length)
             },
-            stages: generateStageRows(this.props.event, startTime, 40, averages)
+            stages: generateStageRows(event, startTime, 40, averages)
         }
         return (
-            // TODO add alternating background colors to columns
             <table className={"table tr-hover"}>
                 <colgroup>
                 {
