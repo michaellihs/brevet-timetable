@@ -6,9 +6,10 @@ import {DEFAULT_AVERAGES} from "../util/constants";
 
 export class StagesJsonDump extends React.Component {
     render() {
-        const iframeWidgetPath = generatePath("/#/timetable/widget/:eventId?averages=:averages", {
+        const iframeWidgetPath = generatePath("/#/timetable/widget/:eventId?averages=:averages&startTime=:startTime", {
             eventId: encodeURIComponent(this.props.selectedEvent),
-            averages: DEFAULT_AVERAGES
+            averages: DEFAULT_AVERAGES,
+            startTime: encodeURIComponent(this.props.startTime)
         })
         return <Form>
             <Form.Group className={"mb-3"}>

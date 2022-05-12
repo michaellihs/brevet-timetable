@@ -101,7 +101,11 @@ export class App extends React.Component {
                 <Row>
                     <Col>
                         <h2>{"Arrival times based on average"}</h2>
-                        <AudaxSuisseTimetable averages={[15, 20, 25, 30]} event={this.state.stages} />
+                        <AudaxSuisseTimetable
+                            event={this.state.stages}
+                            averages={[15, 20, 25, 30]}
+                            startTime={this.state.departure}
+                        />
                     </Col>
                 </Row>
                 <Row>
@@ -111,6 +115,7 @@ export class App extends React.Component {
                             stages={this.state.stages}
                             copyToClipboardHandler={copyToClipboard}
                             selectedEvent={this.state.selectedEvent}
+                            startTime={this.state.departure}
                         />
                     </Col>
                 </Row>

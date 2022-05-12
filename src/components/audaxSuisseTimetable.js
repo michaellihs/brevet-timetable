@@ -102,8 +102,8 @@ export class AudaxSuisseTimetable extends React.Component {
         const event = this.props.event;
         // TODO add average for time limit
         const averages = this.props.averages || DEFAULT_AVERAGES;
-        // TODO make start time parameterizable
-        const startTime = getDateTime("2022-06-30 20:00");
+        const startTime = getDateTime(this.props.startTime);
+
         const tableData = {
             header1: {
                 cols: generateHeader1Cols(...averages)

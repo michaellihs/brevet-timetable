@@ -7,12 +7,15 @@ export default function Widget() {
     const event = events.get(params.eventId);
 
     const [searchParams] = useSearchParams();
-    const averagesQueryString = searchParams.get('averages')
+
+    const averagesQueryString = searchParams.get('averages');
     const averages = (averagesQueryString !== null) ? averagesQueryString.split(',') : null;
+
+    const startTime = searchParams.get('startTime')
 
     return (
         <main style={{ padding: "1rem 0" }}>
-            <AudaxSuisseTimetable averages={averages} event={event} />
+            <AudaxSuisseTimetable startTime={startTime} averages={averages} event={event} />
         </main>
     );
 }
