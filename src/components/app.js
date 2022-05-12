@@ -97,12 +97,12 @@ export class App extends React.Component {
                         }}/>
                     </Col>
                 </Row>
-                <Row>
-                    <Col>
-                        <h2>{"Arrival times based on average"}</h2>
-                        <AudaxSuisseTimetable event={this.state.stages} />
-                    </Col>
-                </Row>
+                {/*<Row>*/}
+                {/*    <Col>*/}
+                {/*        <h2>{"Arrival times based on average"}</h2>*/}
+                {/*        <AudaxSuisseTimetable event={this.state.stages} />*/}
+                {/*    </Col>*/}
+                {/*</Row>*/}
                 <Row>
                     <Col>
                         <h2>{"Export event"}</h2>
