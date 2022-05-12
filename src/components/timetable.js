@@ -31,27 +31,31 @@ function TimeField(props) {
 
 export class Timetable extends React.Component {
     render() {
-        const alignRight = {
-            textAlign: 'right'
-        };
-
         return (
             <>
-                <table className="table timetable tr-hover" id={"calcTable"}>
+                <table className="table tr-hover" id={"calcTable"}>
+                    <colgroup>
+                        {
+                            [...Array(11).keys()].map(index => {
+                                const cssClass = (index !== 0) ? ((index % 2 === 1) ? 'col-bg-lightgray' : 'col-bg-darkgray') : '';
+                                return (<col key={index} span={1} className={cssClass} />);
+                            })
+                        }
+                    </colgroup>
                     <thead key={"thead"}>
-                    <tr key={"thead-tr"} className={"d-flex"}>
-                        <th key={"stage"} className={"col-2"}>stage</th>
-                        <th key={"departure"} style={alignRight} className={"col-1"}>departure</th>
-                        <th key={"arrival"} style={alignRight} className={"col-1"}>arrival</th>
-                        <th key={"stagedistance"} style={alignRight} className={"col-1"}>stage distance</th>
-                        <th key={"totaldistance"} style={alignRight} className={"col-1"}>total distance</th>
-                        <th key={"stageclimb"} style={alignRight} className={"col-1"}>stage climb</th>
-                        <th key={"totalclimb"} style={alignRight} className={"col-1"}>total climb</th>
-                        <th key={"pause"} style={alignRight} className={"col-1"}>pause</th>
-                        <th key={"stagetime"} style={alignRight} className={"col-1"}>stage time</th>
-                        <th key={"totaltime"} style={alignRight} className={"col-1"}>total time</th>
-                        <th key={"average"} style={alignRight} className={"col-1"}>average</th>
-                    </tr>
+                        <tr key={"thead-tr"}>
+                            <th key={"stage"} className={"col-2"}>stage</th>
+                            <th key={"departure align-right"} className={"col-1"}>departure</th>
+                            <th key={"arrival align-right"} className={"col-1"}>arrival</th>
+                            <th key={"stagedistance align-right"} className={"col-1"}>stage distance</th>
+                            <th key={"totaldistance align-right"} className={"col-1"}>total distance</th>
+                            <th key={"stageclimb align-right"} className={"col-1"}>stage climb</th>
+                            <th key={"totalclimb align-right"} className={"col-1"}>total climb</th>
+                            <th key={"pause align-right"} className={"col-1"}>pause</th>
+                            <th key={"stagetime align-right"} className={"col-1"}>stage time</th>
+                            <th key={"totaltime align-right"} className={"col-1"}>total time</th>
+                            <th key={"average align-right"} className={"col-1"}>average</th>
+                        </tr>
                     </thead>
                     <tbody>
                     {this.renderStagesStatic(this.props.stages, this.props.departure, this.props.minutesPerKm, this.props.climbPerHour)}
@@ -65,26 +69,26 @@ export class Timetable extends React.Component {
     }
 
     renderStagesStatic(stages, departure, minutesPerKm, climbPerHour) {
-        const divStyle = {
+        const alignRight = {
             textAlign: 'right'
         };
 
         const calculatedStages = getTimetableFromStages(stages, departure, 0, minutesPerKm, climbPerHour)
 
-        return calculatedStages.map((stage) => {
+        return calculatedStages.map((stage, index) => {
             return (
-                <tr key={stage.id} className={"d-flex"}>
+                <tr key={stage.id}>
                     <td className={"col-2"}><strong >{stage.from} - {stage.to}</strong></td>
-                    <td className={"col-1"} style={divStyle}><TimeField value={stage.arrival} /></td>
-                    <td className={"col-1"} style={divStyle}><TimeField value={stage.departure} /></td>
-                    <td className={"col-1"} style={divStyle}><DistanceField value={stage.distance}/></td>
-                    <td className={"col-1"} style={divStyle}><DistanceField value={stage.totalDistance}/></td>
-                    <td className={"col-1"} style={divStyle}>{stage.climb} m</td>
-                    <td className={"col-1"} style={divStyle}>{stage.totalClimb} m</td>
-                    <td className={"col-1"} style={divStyle}><DurationField value={stage.pause} /></td>
-                    <td className={"col-1"} style={divStyle}><DurationField value={stage.duration} /></td>
-                    <td className={"col-1"} style={divStyle}><DurationField value={stage.totalTime} /></td>
-                    <td className={"col-1"} style={divStyle}><SpeedField value={stage.average} /></td>
+                    <td className={"col-1"} style={alignRight}><TimeField value={stage.arrival} /></td>
+                    <td className={"col-1"} style={alignRight}><TimeField value={stage.departure} /></td>
+                    <td className={"col-1"} style={alignRight}><DistanceField value={stage.distance}/></td>
+                    <td className={"col-1"} style={alignRight}><DistanceField value={stage.totalDistance}/></td>
+                    <td className={"col-1"} style={alignRight}>{stage.climb} m</td>
+                    <td className={"col-1"} style={alignRight}>{stage.totalClimb} m</td>
+                    <td className={"col-1"} style={alignRight}><DurationField value={stage.pause} /></td>
+                    <td className={"col-1"} style={alignRight}><DurationField value={stage.duration} /></td>
+                    <td className={"col-1"} style={alignRight}><DurationField value={stage.totalTime} /></td>
+                    <td className={"col-1"} style={alignRight}><SpeedField value={stage.average} /></td>
                 </tr>
             );
         });

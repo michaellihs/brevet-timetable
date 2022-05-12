@@ -115,11 +115,14 @@ export class AudaxSuisseTimetable extends React.Component {
         return (
             // TODO add alternating background colors to columns
             <table className={"table tr-hover"}>
+                <colgroup>
                 {
                     [...Array(tableData.header1.cols.length - 2).keys()].map(index => {
-                        return (<colgroup key={index} span={2} />);
+                        const cssClass = (index !== 0) ? ((index % 2 === 1) ? 'col-bg-lightgray' : 'col-bg-darkgray') : '';
+                        return (<col key={index} span={2} className={cssClass} />);
                     })
                 }
+                </colgroup>
                 <thead>
                 <tr>
                     {

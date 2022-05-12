@@ -1,3 +1,15 @@
 table.tr-hover>tbody>tr:hover {
-    background-color: #ffff99;
+    background-color: rgba(255, 255, 153, 0.5);
+}
+
+.col-bg-lightgray {
+    background-color: #efefef !important;
+}
+
+.col-bg-darkgray {
+    background-color: #d2d2d2 !important;
+}
+
+.align-right {
+    text-align: right;
 }

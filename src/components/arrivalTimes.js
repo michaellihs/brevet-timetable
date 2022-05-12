@@ -13,6 +13,12 @@ export class ArrivalTimes extends React.Component {
 
         return (
             <table className={"table tr-hover"}>
+                <colgroup>
+                    {[...days,1].map((_, index) => {
+                        const cssClass = (index !== 0) ? ((index % 2 === 1) ? 'col-bg-lightgray' : 'col-bg-darkgray') : '';
+                        return <col className={cssClass} key={index}/>
+                    })}
+                </colgroup>
                 <thead>
                 <tr>
                     <th></th>
