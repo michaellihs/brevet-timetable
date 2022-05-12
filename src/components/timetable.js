@@ -45,16 +45,16 @@ export class Timetable extends React.Component {
                     <thead key={"thead"}>
                         <tr key={"thead-tr"}>
                             <th key={"stage"} className={"col-2"}>stage</th>
-                            <th key={"departure align-right"} className={"col-1"}>departure</th>
-                            <th key={"arrival align-right"} className={"col-1"}>arrival</th>
-                            <th key={"stagedistance align-right"} className={"col-1"}>stage distance</th>
-                            <th key={"totaldistance align-right"} className={"col-1"}>total distance</th>
-                            <th key={"stageclimb align-right"} className={"col-1"}>stage climb</th>
-                            <th key={"totalclimb align-right"} className={"col-1"}>total climb</th>
-                            <th key={"pause align-right"} className={"col-1"}>pause</th>
-                            <th key={"stagetime align-right"} className={"col-1"}>stage time</th>
-                            <th key={"totaltime align-right"} className={"col-1"}>total time</th>
-                            <th key={"average align-right"} className={"col-1"}>average</th>
+                            <th key={"departure"} className={"col-1 align-right"}>departure</th>
+                            <th key={"arrival"} className={"col-1 align-right"}>arrival</th>
+                            <th key={"stagedistance"} className={"col-1 align-right"}>stage distance</th>
+                            <th key={"totaldistance"} className={"col-1 align-right"}>total distance</th>
+                            <th key={"stageclimb"} className={"col-1 align-right"}>stage climb</th>
+                            <th key={"totalclimb"} className={"col-1 align-right"}>total climb</th>
+                            <th key={"pause"} className={"col-1 align-right"}>pause</th>
+                            <th key={"stagetime"} className={"col-1 align-right"}>stage time</th>
+                            <th key={"totaltime"} className={"col-1 align-right"}>total time</th>
+                            <th key={"average"} className={"col-1 align-right"}>average</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,26 +69,22 @@ export class Timetable extends React.Component {
     }
 
     renderStagesStatic(stages, departure, minutesPerKm, climbPerHour) {
-        const alignRight = {
-            textAlign: 'right'
-        };
-
         const calculatedStages = getTimetableFromStages(stages, departure, 0, minutesPerKm, climbPerHour)
 
         return calculatedStages.map((stage, index) => {
             return (
                 <tr key={stage.id}>
                     <td className={"col-2"}><strong >{stage.from} - {stage.to}</strong></td>
-                    <td className={"col-1"} style={alignRight}><TimeField value={stage.arrival} /></td>
-                    <td className={"col-1"} style={alignRight}><TimeField value={stage.departure} /></td>
-                    <td className={"col-1"} style={alignRight}><DistanceField value={stage.distance}/></td>
-                    <td className={"col-1"} style={alignRight}><DistanceField value={stage.totalDistance}/></td>
-                    <td className={"col-1"} style={alignRight}>{stage.climb} m</td>
-                    <td className={"col-1"} style={alignRight}>{stage.totalClimb} m</td>
-                    <td className={"col-1"} style={alignRight}><DurationField value={stage.pause} /></td>
-                    <td className={"col-1"} style={alignRight}><DurationField value={stage.duration} /></td>
-                    <td className={"col-1"} style={alignRight}><DurationField value={stage.totalTime} /></td>
-                    <td className={"col-1"} style={alignRight}><SpeedField value={stage.average} /></td>
+                    <td className={"col-1 align-right"}><TimeField value={stage.arrival} /></td>
+                    <td className={"col-1 align-right"}><TimeField value={stage.departure} /></td>
+                    <td className={"col-1 align-right"}><DistanceField value={stage.distance}/></td>
+                    <td className={"col-1 align-right"}><DistanceField value={stage.totalDistance}/></td>
+                    <td className={"col-1 align-right"}>{stage.climb} m</td>
+                    <td className={"col-1 align-right"}>{stage.totalClimb} m</td>
+                    <td className={"col-1 align-right"}><DurationField value={stage.pause} /></td>
+                    <td className={"col-1 align-right"}><DurationField value={stage.duration} /></td>
+                    <td className={"col-1 align-right"}><DurationField value={stage.totalTime} /></td>
+                    <td className={"col-1 align-right"}><SpeedField value={stage.average} /></td>
                 </tr>
             );
         });
