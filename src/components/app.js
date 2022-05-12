@@ -11,6 +11,7 @@ import {Timetable} from "./timetable";
 import {ArrivalTimes} from "./arrivalTimes";
 import {StagesJsonDump} from "./stagesJsonDump";
 import {AudaxSuisseTimetable} from "./audaxSuisseTimetable";
+import {uuid} from "../util/uuid";
 
 export class App extends React.Component {
 
@@ -97,12 +98,12 @@ export class App extends React.Component {
                         }}/>
                     </Col>
                 </Row>
-                {/*<Row>*/}
-                {/*    <Col>*/}
-                {/*        <h2>{"Arrival times based on average"}</h2>*/}
-                {/*        <AudaxSuisseTimetable event={this.state.stages} />*/}
-                {/*    </Col>*/}
-                {/*</Row>*/}
+                <Row>
+                    <Col>
+                        <h2>{"Arrival times based on average"}</h2>
+                        <AudaxSuisseTimetable event={this.state.stages} />
+                    </Col>
+                </Row>
                 <Row>
                     <Col>
                         <h2>{"Export event"}</h2>
@@ -131,7 +132,7 @@ export class App extends React.Component {
 
         this.setState({
             stages: stages.concat({
-                id: crypto.randomUUID(),
+                id: uuid(),
                 from: document.getElementById("input_from").value,
                 to: document.getElementById("input_to").value,
                 distance: document.getElementById("input_distance").value,

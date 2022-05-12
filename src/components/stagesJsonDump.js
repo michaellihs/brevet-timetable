@@ -53,7 +53,7 @@ export class StagesJsonDump extends React.Component {
                             <Form.Label>iFrame code</Form.Label>
                             <div className="input-group">
                                 <input id="iframeCode" type="text" className="form-control" readOnly={true}
-                                       value={`<iframe src="${window.location.protocol}//${window.location.host}${iframeWidgetPath}"></iframe>`}/>
+                                       value={`<iframe src="${window.location.protocol}//${window.location.host}/timetable${iframeWidgetPath}"></iframe>`}/>
                                 <span className="input-group-btn">
                                     <button className="btn btn-primary" type="button" id="copy-button-iframe"
                                             data-toggle="tooltip" data-placement="button"

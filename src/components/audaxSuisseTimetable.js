@@ -1,12 +1,8 @@
 import React from 'react';
-import {DateTime} from "luxon";
+import {getDateTime, timeFromDateTime, weekdayFromDateTime} from "../util/date";
+import {uuid} from "../util/uuid";
 
 // TODO localize and translate labels
-
-// TODO move to a global constant file
-const TIME_FORMAT = "HH:mm";
-const DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
-
 
 function generateHeader1Cols(...args) {
     const headerCols = new Array(args.length + 2);
@@ -27,21 +23,6 @@ function generateHeader2Cols(length) {
         );
     }
     return headerCols;
-}
-
-// TODO move date functions to a global DateUtils class
-function getDateTime(string) {
-    return DateTime.fromFormat(string, DATE_TIME_FORMAT);
-}
-
-// TODO move date functions to a global DateUtils class
-function timeFromDateTime(dateTime) {
-    return dateTime.toFormat(TIME_FORMAT);
-}
-
-// TODO move date functions to a global DateUtils class
-function weekdayFromDateTime(dateTime) {
-    return dateTime.toFormat("cccc");
 }
 
 function calcArrivalTime(departure, distance, average) {
@@ -100,7 +81,7 @@ function generateStageRows(stages, startTime, timeLimit, averages) {
     });
     const rowSpans = calculateRowSpans(arrivalTimes);
     const stageRows = [];
-    const initialStage = {id: crypto.randomUUID(), to: stages[0].from, distance: 0}
+    const initialStage = {id: uuid(), to: stages[0].from, distance: 0}
     departures = averages.map(_ => {return startTime});
     [initialStage, ...stages].forEach((stage, index) => {
         stageRows.push({
