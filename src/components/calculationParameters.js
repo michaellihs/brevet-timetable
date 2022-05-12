@@ -7,6 +7,14 @@ export class CalculationParameters extends React.Component {
         return <Form>
             <Row>
                 <Col>
+                    <Alert variant={"success"}>
+                        The duration per stage is calculated as:
+                        <pre>(distance * minutesPerKm) + (climb / climbPerHour * 60)</pre>
+                    </Alert>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
                     <Form.Group className={"mb-3"} controlId={"minutesPerKm"}>
                         <Form.Label>Minutes / km</Form.Label>
                         <Form.Control
@@ -29,14 +37,6 @@ export class CalculationParameters extends React.Component {
                             How many meters do you climb per hour
                         </Form.Text>
                     </Form.Group>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Alert variant={"success"}>
-                        The duration per stage is calculated as:
-                        <pre>(distance * minutesPerKm) + (climb / climbPerHour * 60)</pre>
-                    </Alert>
                 </Col>
             </Row>
             <Row>

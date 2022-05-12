@@ -10,6 +10,7 @@ import {StagesForm} from "./stagesForm";
 import {Timetable} from "./timetable";
 import {ArrivalTimes} from "./arrivalTimes";
 import {StagesJsonDump} from "./stagesJsonDump";
+import {AudaxSuisseTimetable} from "./audaxSuisseTimetable";
 
 export class App extends React.Component {
 
@@ -94,6 +95,12 @@ export class App extends React.Component {
                             minutesPerKm: this.state.minutesPerKm,
                             climbPerHour: this.state.climbPerHour
                         }}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <h2>{"Arrival times based on average"}</h2>
+                        <AudaxSuisseTimetable event={this.state.stages} />
                     </Col>
                 </Row>
                 <Row>

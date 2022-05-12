@@ -1,131 +1,185 @@
 import React from 'react';
 import {DateTime} from "luxon";
 
+// TODO localize and translate labels
 
-function Row(props) {
-    const stage = props.stage;
-    return (
-        <>
-            <td>{stage.arrival.toFormat("HH:mm")}</td>
-            <td>{stage.arrival.toFormat("cccc")}</td>
-        </>
-    )
+// TODO move to a global constant file
+const TIME_FORMAT = "HH:mm";
+const DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm";
+
+
+function generateHeader1Cols(...args) {
+    const headerCols = new Array(args.length + 2);
+    headerCols.push(
+        {caption: "Checkpoint", rowspan: 2, colspan: 1},
+        {caption: "km", rowspan: 2, colspan: 1}
+    );
+    args.forEach((arg) => {headerCols.push({caption: `ø ${arg} km/h`, rowspan: 1, colspan: 2})});
+    return headerCols;
 }
 
-function SpeedField(props) {
-    return (props.value.toLocaleString('en-US', {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-        useGrouping: false
-    }) + " km/h");
+function generateHeader2Cols(length) {
+    const headerCols = new Array(length);
+    for (let i = 0; i < length; i++) {
+        headerCols.push(
+            {caption: "Day"},
+            {caption: "Arrival"},
+        );
+    }
+    return headerCols;
 }
 
-function DistanceField(props) {
-    return (props.value.toLocaleString('en-US', {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-        useGrouping: false
-    }) + " km");
+// TODO move date functions to a global DateUtils class
+function getDateTime(string) {
+    return DateTime.fromFormat(string, DATE_TIME_FORMAT);
+}
+
+// TODO move date functions to a global DateUtils class
+function timeFromDateTime(dateTime) {
+    return dateTime.toFormat(TIME_FORMAT);
+}
+
+// TODO move date functions to a global DateUtils class
+function weekdayFromDateTime(dateTime) {
+    return dateTime.toFormat("cccc");
+}
+
+function calcArrivalTime(departure, distance, average) {
+    return departure.plus({minutes: Number(distance) / Number(average) * 60});;
+}
+
+function calculateRowSpans(arrivalTimes) {
+    const daysOnly = arrivalTimes.map((arrivalTimesForStage) => {
+        return arrivalTimesForStage.filter((_, index) => {
+            return index % 2 == 0;
+        });
+    });
+
+    let lastDays = daysOnly[0];
+    let daysCount = [];
+
+    for(var dayIndex = 0; dayIndex < daysOnly[0].length; dayIndex++) {
+        let dayCount = 0;
+        let daysCountForAverage = [];
+        for (var stageIndex = 0; stageIndex < daysOnly.length; stageIndex++) {
+            if (daysOnly[stageIndex][dayIndex] === lastDays[dayIndex]) {
+                dayCount++;
+            } else {
+                lastDays[dayIndex] = daysOnly[stageIndex][dayIndex];
+                daysCountForAverage.push(dayCount);
+                dayCount = 1;
+            }
+        }
+        daysCountForAverage.push(dayCount);
+        daysCount.push(daysCountForAverage);
+    }
+
+    let rowSpansVertical = daysCount.map(daysCountForAverage => {
+        return daysCountForAverage.flatMap(daysCount => {
+            let rowSpansPerAverage = [daysCount];
+            for (let i = 1; i < daysCount; i++) {
+                rowSpansPerAverage.push(-1);
+            }
+            return rowSpansPerAverage;
+        })
+    });
+
+    return rowSpansVertical[0].map((_, colIndex) => rowSpansVertical.flatMap(row => [row[colIndex], 1]));
+}
+
+function generateStageRows(stages, startTime, timeLimit, averages) {
+    let departures = averages.map(_ => {return startTime});
+    const arrivalTimes = [{distance: 0}, ...stages].map(stage => {
+        return (
+            averages.flatMap((average, averageIndex) => {
+                const arrivalTime = calcArrivalTime(departures[averageIndex], stage.distance, average);
+                departures[averageIndex] = arrivalTime;
+                return [weekdayFromDateTime(arrivalTime), timeFromDateTime(arrivalTime)]
+            })
+        );
+    });
+    const rowSpans = calculateRowSpans(arrivalTimes);
+    const stageRows = [];
+    const initialStage = {id: crypto.randomUUID(), to: stages[0].from, distance: 0}
+    departures = averages.map(_ => {return startTime});
+    [initialStage, ...stages].forEach((stage, index) => {
+        stageRows.push({
+            id: stage.id,
+            from: stage.to,
+            km: stage.distance,
+            arrivalTimes: arrivalTimes[index],
+            rowSpans: rowSpans[index],
+        });
+    });
+    console.log(stageRows);
+    return stageRows;
 }
 
 export class AudaxSuisseTimetable extends React.Component {
 
     render() {
-        const desiredAverages = [30, 25, 20, 15];
-        const stages = this.props.event;
-        let startTime = "2022-06-30 20:00";
-        const timetables = desiredAverages.map((average) => {
-           return {average: average, stages: getTimetableForAverage(stages, startTime, average)};
-        });
+        // TODO make averages time parameterizable
+        const averages = [15, 20, 25, 30];
+        // TODO make start time parameterizable
+        const startTime = getDateTime("2022-06-30 20:00");
+        const tableData = {
+            header1: {
+                cols: generateHeader1Cols(...averages)
+            },
+            header2: {
+                cols: generateHeader2Cols(averages.length)
+            },
+            stages: generateStageRows(this.props.event, startTime, 40, averages)
+        }
         return (
-            // TODO check this doc for proper layouting the table https://www.w3.org/WAI/tutorials/tables/irregular/
+            // TODO add alternating background colors to columns
+            // TODO highlight a table row when hovering over it with the mouse
             <table className={"table"}>
-                <col />
-                {timetables.map((timetable, index) => {
-                    return <colgroup key={timetable.stages[0].id + "_col_" + index} span={"3"} />}
-                )}
-                <tr>
-                    <th rowSpan={"2"} scope={'col'}>CP</th>
-                    <th rowSpan={"2"} scope={'col'}>km</th>
-                    {timetables.map((timetable) => {
-                        return <th key={timetable.average} colSpan={"2"}>ø {timetable.average} km/h</th>}
-                    )}
-                </tr>
+                {
+                    [...Array(tableData.header1.cols.length - 2).keys()].map(index => {
+                        return (<colgroup key={index} span={2} />);
+                    })
+                }
+                <thead>
                 <tr>
                     {
-                        timetables.map((timetable) => {
-                            return (
-                                <>
-                                    <th key={timetable.average + "_arrival"}>Arrival</th>
-                                    <th key={timetable.average + "_day"}>Day</th>
-                                </>
-                            )
+                        tableData.header1.cols.map((col, index) => {
+                            return <th key={index} colSpan={col.colspan} rowSpan={col.rowspan} scope="colgroup">{col.caption}</th>;
                         })
                     }
                 </tr>
                 <tr>
-                    <td>{timetables[0].stages[0].from}</td>
-                    <td><DistanceField value={0} /></td>
-                    {timetables.map((timetable, index) => {
-                        return (
-                            <Row key={"2a1d04ca-99bc-433a-b7b7-d2cd799f3e81_zero_row_" + index} stage={{id: "2a1d04ca-99bc-433a-b7b7-d2cd799f3e81" ,to: timetable.stages[0].from, distance: 0, climb: 0, arrival: DateTime.fromFormat(startTime, "yyyy-MM-dd HH:mm")}} />
-                        )
-                    })}
+                    {
+                        tableData.header2.cols.map((col, index) => {
+                            return (<th key={index} scope={"col"}>{col.caption}</th>);
+                        })
+                    }
                 </tr>
-                {timetables[0].stages.map((_, stageIndex) => {
-                    return (
-                        <tr key={timetables[0].stages[stageIndex].id}>
-                            <td>{timetables[0].stages[stageIndex].to}</td>
-                            <td><DistanceField value={timetables[0].stages[stageIndex].totalDistance} /></td>
-                            {timetables.map((timetable, timetableIndex) => {
-                                return(
-                                    <Row key={timetable.stages[stageIndex].id + "_" + timetableIndex} stage={timetable.stages[stageIndex]}/>
-                                )
-                            })}
-                        </tr>
-                    )
-                })}
+                </thead>
+                <tbody>
+                {
+                    tableData.stages.map((stage, stageIndex) => {
+                        return (
+                            <tr key={stage.id}>
+                                <th scope={"row"}>{stage.from}</th>
+                                <td>{stage.km}</td>
+                                {
+                                    stage.arrivalTimes.map((arrivalTime, colIndex) => {
+                                        const rowSpan = stage.rowSpans[colIndex];
+                                        return(
+                                            //(rowSpan > 0 ? <td rowSpan={rowSpan} key={colIndex}>{arrivalTime}</td> : <></>)
+                                            (rowSpan > 0 ? <td key={colIndex}>{arrivalTime}</td> : <td key={colIndex}></td>)
+                                        );
+                                    })
+                                }
+                            </tr>
+                        );
+                    })
+                }
+                </tbody>
             </table>
+            // TODO add an export button for Excel download
         );
     }
 
-}
-
-function getTimetableForAverage(stages, startTime, average) {
-
-    let totalDistance = 0;
-    let totalClimb = 0;
-    let totalTime = 0;
-    let departure = DateTime.fromFormat(startTime, "yyyy-MM-dd HH:mm")
-    let arrival = departure
-
-    return stages.map((stage) => {
-        totalDistance += Number(stage.distance);
-        totalClimb += Number(stage.climb);
-        const stageDuration = stage.distance / average * 60;
-        totalTime += stageDuration + Number(stage.pause);
-        arrival = departure.plus({minutes: stageDuration});
-        const stageAverage = Number(stage.distance) / stageDuration * 60;
-
-        const entry = {
-            id: stage.id,
-            from: stage.from,
-            to: stage.to,
-            departure: departure,
-            arrival: arrival,
-            distance: stage.distance,
-            climb: stage.climb,
-            pause: stage.pause,
-            duration: stageDuration,
-            totalDistance: totalDistance,
-            totalClimb: totalClimb,
-            totalTime: totalTime,
-            average: stageAverage,
-        };
-
-        departure = arrival.plus({minutes: stage.pause});
-        arrival = arrival.plus({minutes: stage.pause});
-
-        return entry;
-    });
 }
