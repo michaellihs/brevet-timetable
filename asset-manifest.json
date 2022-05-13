@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/timetable/static/css/main.45340aa7.css",
-    "main.js": "/timetable/static/js/main.125db0b7.js",
+    "main.js": "/timetable/static/js/main.a908d41f.js",
     "index.html": "/timetable/index.html",
     "main.45340aa7.css.map": "/timetable/static/css/main.45340aa7.css.map",
-    "main.125db0b7.js.map": "/timetable/static/js/main.125db0b7.js.map"
+    "main.a908d41f.js.map": "/timetable/static/js/main.a908d41f.js.map"
   },
   "entrypoints": [
     "static/css/main.45340aa7.css",
-    "static/js/main.125db0b7.js"
+    "static/js/main.a908d41f.js"
   ]
 }
