@@ -1,26 +1,18 @@
 import React from "react";
-import {render, unmountComponentAtNode} from "react-dom";
-import {createRoot} from "react-dom/client";
-import { act } from "react-dom/test-utils";
-
+import {render, screen} from '@testing-library/react'
+import '@testing-library/jest-dom';
 import {TtField} from "./ttField";
 
-let container = null;
-beforeEach(() => {
-    // setup a DOM element as a render target
-    container = document.createElement("div");
-    document.body.appendChild(container);
-});
 
-it("renders with or without a unit", () => {
-    const blurHandler = () => {}
+describe("timetable field", () => {
+    it("renders with a unit", () => {
+        render(<TtField unit={"km"}/>);
+        expect(screen.getByTestId(/unit-span/i)).toBeInTheDocument();
+        expect(screen.getByText('km')).toBeInTheDocument();
+    });
 
-    const root = createRoot(container);
-    root.render(<TtField updateInputHandler={() => blurHandler()} />);
-
-    expect(container.textContent).toBe("");
-
-    root.render(<TtField unit={'km'} />);
-
-    expect(container.textContent).toBe("");
+    it("renders without a unit", () => {
+        render(<TtField />);
+        expect(screen.queryByTestId(/unit-span/i)).toBeNull();
+    })
 });

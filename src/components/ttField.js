@@ -19,15 +19,16 @@ export class TtField extends React.Component {
 
     render() {
         return (
-            <div className={"input-group"}>
+            <div className={"input-group"} aria-label={"input"}>
                 <Form.Control
                     onBlur={() => this.props.updateInputHandler(this.props.stage, this.props.field, this.state.inputValue)}
                     onChange={this.handleChange}
                     defaultValue={this.props.inputValue}
                     className={this.props.unit && "text-end"}
+                    aria-label="form"
                 />
-                {this.props.unit && <div className="input-group-append">
-                    <span className="input-group-text">{this.props.unit}</span>
+                {this.props.unit && <div data-testid={"unit-indicator"} aria-label={"unit-indicator"} className="input-group-append">
+                    <span data-testid={"unit-span"} className="input-group-text">{this.props.unit}</span>
                 </div>}
             </div>
         );
