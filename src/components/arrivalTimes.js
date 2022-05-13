@@ -1,13 +1,19 @@
 import React from 'react';
 import {getTimetableFromStages} from '../domain/calculation';
+import {AlertEmptyStages} from "./alerts";
 
 export class ArrivalTimes extends React.Component {
     render() {
         const stages = this.props.stages;
-        const startTime = this.props.params.startTime;
-        const timeLimit = this.props.params.timeLimit;
-        const minutesPerKm = this.props.params.minutesPerKm;
-        const climbPerHour = this.props.params.climbPerHour;
+
+        if (stages === null || stages.length === 0) {
+            return (<AlertEmptyStages />);
+        }
+
+        const startTime = this.props.startTime;
+        const timeLimit = this.props.timeLimit;
+        const minutesPerKm = this.props.minutesPerKm;
+        const climbPerHour = this.props.climbPerHour;
         const timetable = getTimetableFromStages(stages, startTime, timeLimit, minutesPerKm, climbPerHour);
         const days = this.getDaysFromTimetable(timetable);
 
@@ -30,7 +36,7 @@ export class ArrivalTimes extends React.Component {
                 <tbody>
                 {timetable.map((stage, index) => {
                     return (
-                        <tr key={index}>
+                        <tr data-testid={"stages-row"} key={index}>
                             <td><strong>{stage.to}</strong></td>
                             {days.map((day, index) => {
                                 const sleep = (stage.pause > 60) ? "😴" : "";

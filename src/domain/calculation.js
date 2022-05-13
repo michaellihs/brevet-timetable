@@ -1,5 +1,11 @@
 import {DateTime} from "luxon";
 
+export function getTotalDistanceFromStages(stages) {
+    return stages.reduce(function (previousValue, currentValue) {
+        return previousValue + Number(currentValue.distance);
+    }, 0);
+}
+
 export function getTimetableFromStages(stages, startTime, timeLimit, minutesPerKm, climbPerHour) {
 
     let totalDistance = 0;

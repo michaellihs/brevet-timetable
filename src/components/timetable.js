@@ -1,36 +1,19 @@
 import React from 'react';
-import {Duration} from 'luxon';
 import {Button, Form} from 'react-bootstrap';
 import * as PropTypes from 'prop-types';
 import {getTimetableFromStages} from '../domain/calculation';
+import {DistanceField, DurationField, SpeedField, TimeField} from "./fields";
+import {AlertEmptyStages} from "./alerts";
 
-
-function DistanceField(props) {
-    return (props.value.toLocaleString('en-US', {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-        useGrouping: false
-    }) + " km");
-}
-
-function SpeedField(props) {
-    return (props.value.toLocaleString('en-US', {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2,
-        useGrouping: false
-    }) + " km/h");
-}
-
-function DurationField(props) {
-    return (Duration.fromMillis(props.value * 60 * 1000).toFormat("hh:mm"))
-}
-
-function TimeField(props) {
-    return props.value.toFormat("dd.LL. HH:mm");
-}
 
 export class Timetable extends React.Component {
     render() {
+        const stages = this.props.stages;
+
+        if (stages === null || stages.length === 0) {
+            return (<AlertEmptyStages/>);
+        }
+
         return (
             <>
                 <table className="table tr-hover" id={"calcTable"}>
@@ -58,7 +41,7 @@ export class Timetable extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                    {this.renderStagesStatic(this.props.stages, this.props.departure, this.props.minutesPerKm, this.props.climbPerHour)}
+                    {this.renderStagesStatic(stages, this.props.departure, this.props.minutesPerKm, this.props.climbPerHour)}
                     </tbody>
                 </table>
                 <Form.Group className={"mb-3"}>
@@ -73,7 +56,7 @@ export class Timetable extends React.Component {
 
         return calculatedStages.map((stage, index) => {
             return (
-                <tr key={stage.id}>
+                <tr data-testid={"stages-row"} key={stage.id}>
                     <td className={"col-2"}><strong >{stage.from} - {stage.to}</strong></td>
                     <td className={"col-1 align-right"}><TimeField value={stage.departure} /></td>
                     <td className={"col-1 align-right"}><TimeField value={stage.arrival} /></td>

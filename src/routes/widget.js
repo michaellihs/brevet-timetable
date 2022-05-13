@@ -10,12 +10,12 @@ export default function Widget() {
 
     const averagesQueryString = searchParams.get('averages');
     const averages = (averagesQueryString !== null) ? averagesQueryString.split(',') : null;
-
-    const startTime = searchParams.get('startTime')
+    const startTime = searchParams.get('startTime');
+    const timeLimit = searchParams.get('timeLimit');
 
     return (
         <main style={{ padding: "1rem 0" }}>
-            <AudaxSuisseTimetable startTime={startTime} averages={averages} event={event} />
+            <AudaxSuisseTimetable timeLimit={timeLimit} startTime={startTime} averages={averages} event={event} />
         </main>
     );
 }

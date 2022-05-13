@@ -40,7 +40,7 @@ export class DepartureForm extends React.Component {
                                 defaultValue={this.props.initialDeparture}
                             />
                             <Form.Text className={"text-muted"}>
-                                Please provide the start date and start time in 'jjjj-mm-dd hh:mm'
+                                Please provide the start date and start time in 'yyyy-mm-dd hh:mm'
                             </Form.Text>
                         </Form.Group>
                     </Col>
@@ -48,7 +48,7 @@ export class DepartureForm extends React.Component {
                 <Row>
                     <Col>
                         <Form.Group className={"mb-3"} controlId={"formLimit"}>
-                            <Form.Label>Time Limit</Form.Label>
+                            <Form.Label>Time Limit (in hours)</Form.Label>
                             <Form.Control
                                 onChange={this.handleTimeLimitChange}
                                 placeholder={"125:00"}
@@ -56,7 +56,7 @@ export class DepartureForm extends React.Component {
                                 defaultValue={this.props.initialTimelimit}
                             />
                             <Form.Text className={"text-muted"}>
-                                Please provide the max time limit for the event
+                                Please provide the max time limit for the event (in hours)
                             </Form.Text>
                         </Form.Group>
                     </Col>

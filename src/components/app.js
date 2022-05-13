@@ -26,7 +26,7 @@ export class App extends React.Component {
         this.state = {
             stages: events.get((event ? event : 'LEL 2022')),
             departure: "2022-08-07 12:45",
-            timeLimit: "125:00",
+            timeLimit: "125",
             minutesPerKm: 2,
             climbPerHour: 450,
             selectedEvent: event ? event : 'LEL 2022'
@@ -52,7 +52,7 @@ export class App extends React.Component {
                         <DepartureForm
                             initialDeparture={"2022-08-07 12:45"}
                             updateStartTimeAndTimeLimitHandler={(departure, timeLimit) => this.handleStartTimeAndTimeLimitChange(departure, timeLimit)}
-                            initialTimelimit={'125:00'}
+                            initialTimelimit={'125'}
                         />
                     </Col>
                     <Col>
@@ -90,12 +90,13 @@ export class App extends React.Component {
                 <Row>
                     <Col>
                         <h2>{"Arrival times"}</h2>
-                        <ArrivalTimes stages={this.state.stages} params={{
-                            startTime: this.state.departure,
-                            timeLimit: this.state.timeLimit,
-                            minutesPerKm: this.state.minutesPerKm,
-                            climbPerHour: this.state.climbPerHour
-                        }}/>
+                        <ArrivalTimes
+                            stages={this.state.stages}
+                            startTime={this.state.departure}
+                            timeLimit={this.state.timeLimit}
+                            minutesPerKm={this.state.minutesPerKm}
+                            climbPerHour={this.state.climbPerHour}
+                        />
                     </Col>
                 </Row>
                 <Row>
@@ -105,6 +106,7 @@ export class App extends React.Component {
                             event={this.state.stages}
                             averages={[15, 20, 25, 30]}
                             startTime={this.state.departure}
+                            timeLimit={this.state.timeLimit}
                         />
                     </Col>
                 </Row>
@@ -116,6 +118,7 @@ export class App extends React.Component {
                             copyToClipboardHandler={copyToClipboard}
                             selectedEvent={this.state.selectedEvent}
                             startTime={this.state.departure}
+                            timeLimit={this.state.timeLimit}
                         />
                     </Col>
                 </Row>
