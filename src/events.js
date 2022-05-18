@@ -566,4 +566,6 @@ events.set("BRM 600 - Talwind", [{
     "pause": "0"
 }]);
 
+events.set("BRM 400 - Stuttgart+", [{"id":"b869a120-8011-4d74-b2da-63cc6f953520","from":"Buch","to":"Marbach","distance":"122","climb":"1390","pause":"30"},{"id":"9cbeb499-e486-40c8-9036-b02efdfbcdae","from":"Marbach","to":"Stuttgart Fernsehturm","distance":"78","climb":"800","pause":"30"},{"id":"5e1b3435-e8d4-41db-843b-18e0dd1e5785","from":"Stuttgart Fernsehturm","to":"Schloss Solitude","distance":"16","climb":"210","pause":"0"},{"id":"01bf1a9b-28e8-4213-a178-9587a57356ec","from":"Schloss Solitude","to":"Heuberg","distance":"122","climb":"1730","pause":"30"},{"id":"d93d13ce-db82-4e9f-9d95-ee17720eec8d","from":"Heuberg","to":"Buch","distance":"64","climb":"420","pause":"0"}]);
+
 export default events;
