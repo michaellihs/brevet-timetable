@@ -1,6 +1,21 @@
-# Getting Started with Create React App
+# Getting Started with `timetable`
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Run the project locally
+
+Prerequisites
+
+- npm
+- node
+
+To run the project locally you first have to install the needed dependencies
+
+- `npm install`
+
+After that you can start
+
+- `npm start`
 
 ## Available Scripts
 
