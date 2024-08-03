@@ -25,11 +25,11 @@ export class App extends React.Component {
 
         this.state = {
             stages: events.get((event ? event : 'LEL 2022')),
-            departure: "2022-08-07 12:45",
-            timeLimit: "125",
-            minutesPerKm: 2,
-            climbPerHour: 450,
-            selectedEvent: event ? event : 'LEL 2022'
+            departure: "2024-08-16 20:10",
+            timeLimit: "134",
+            minutesPerKm: 2.5,
+            climbPerHour: 400,
+            selectedEvent: event ? event : '1001 Miglia - 2024'
         };
     }
 
