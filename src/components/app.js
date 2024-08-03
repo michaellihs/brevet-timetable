@@ -24,7 +24,7 @@ export class App extends React.Component {
         console.log('Selected event ' + event);
 
         this.state = {
-            stages: events.get((event ? event : 'LEL 2022')),
+            stages: events.get((event ? event : '1001 Miglia - 2024')),
             departure: "2024-08-16 20:10",
             timeLimit: "134",
             minutesPerKm: 2.5,
@@ -50,9 +50,9 @@ export class App extends React.Component {
                     <Col>
                         <h2>{"Departure and time limit"}</h2>
                         <DepartureForm
-                            initialDeparture={"2022-08-07 12:45"}
+                            initialDeparture={"2024-08-16 20:10"}
                             updateStartTimeAndTimeLimitHandler={(departure, timeLimit) => this.handleStartTimeAndTimeLimitChange(departure, timeLimit)}
-                            initialTimelimit={'125'}
+                            initialTimelimit={'134'}
                         />
                     </Col>
                     <Col>

@@ -5,8 +5,8 @@ export class DepartureForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            departure: "2022-08-07 12:45",
-            timeLimit: "125:00"
+            departure: "2024-08-16 20:10",
+            timeLimit: "134:00"
         }
     }
 
@@ -35,7 +35,7 @@ export class DepartureForm extends React.Component {
                             <Form.Control
                                 onChange={this.handleDepartureChange}
                                 // onBlur={() => this.props.updateDepartureHandler(this.state.departure)}
-                                placeholder={"2022-08-05 12:45"}
+                                placeholder={"2024-08-10 20:10"}
                                 className={"w-50"}
                                 defaultValue={this.props.initialDeparture}
                             />
@@ -51,7 +51,7 @@ export class DepartureForm extends React.Component {
                             <Form.Label>Time Limit (in hours)</Form.Label>
                             <Form.Control
                                 onChange={this.handleTimeLimitChange}
-                                placeholder={"125:00"}
+                                placeholder={"134:00"}
                                 className={"w-50"}
                                 defaultValue={this.props.initialTimelimit}
                             />
